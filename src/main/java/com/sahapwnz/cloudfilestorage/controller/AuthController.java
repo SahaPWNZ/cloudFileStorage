@@ -11,9 +11,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @Controller
 public class AuthController {
-
+//глянуть отличия принципла и юзерДетаилс
     private final UserService userService;
 
     @Autowired
@@ -21,10 +23,13 @@ public class AuthController {
         this.userService = userService;
     }
     @GetMapping("/home")
-    public String home() {
+    public String home(Model model, Principal principal) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         System.out.println("---------------");
+        System.out.println(principal.getName());
         System.out.println(userDetails);
+        model.addAttribute("login", userDetails.getUsername());
         return "home"; // Убедитесь, что у вас есть шаблон home.html
     }
 

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Ошибка</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8d7da;
+      color: #721c24;
+      padding: 20px;
+      border: 1px solid #f5c6cb;
+      border-radius: 5px;
+    }
+    h1 {
+      color: #721c24;
+    }
+  </style>
+</head>
+<body>
+<h1>Произошла ошибка</h1>
+<p th:text="${errorMessage}"></p>
+<a href="/home">Вернуться на главную страницу</a>
+<br><br>
+<a th:href="@{${redirectUrl}}" style="color: blue;">Вернуться на предыдущую страницу</a>
+</body>
+</html>
