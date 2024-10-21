@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Регистрация</title>
+</head>
+<body>
+
+<h1>Регистрация</h1>
+
+<form action="#" th:action="@{/register}" method="post" th:object="${userRequestDTO}">
+    <label for="login">Имя пользователя:</label>
+    <input type="text" id="login" name="login" th:field="*{login}" required/>
+    <br><br>
+    <label for="password">Пароль:</label>
+    <input type="password" id="password" name="password" th:field="*{password}" required/>
+    <br><br>
+    <label for="confirmPassword">Confirm password:</label>
+    <input type="password" id="confirmPassword" name="confirmPassword" th:field="*{confirmPassword}" required>
+    <br><br>
+
+    <button type="submit">Зарегистрироваться</button>
+
+    <div th:if="${param.error}">
+        <p style="color:red;">Пользователь с таким именем уже существует.</p></div>
+
+</form>
+<a href="/login" class="button">Авторизация</a>
+</body>
+</html>
