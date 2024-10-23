@@ -24,7 +24,6 @@ public class UserService implements UserDetailsService {
         if (userRepository.findByLogin(user.getLogin()).isPresent()) {
             return false;
         }
-
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return true;

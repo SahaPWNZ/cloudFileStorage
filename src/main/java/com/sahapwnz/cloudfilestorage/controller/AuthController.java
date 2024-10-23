@@ -9,19 +9,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
 
 @Controller
 public class AuthController {
-//глянуть отличия принципла и юзерДетаилс
+    //глянуть отличия принципла и юзерДетаилс
     private final UserService userService;
 
     @Autowired
-    public AuthController( UserService userService) {
+    public AuthController(UserService userService) {
         this.userService = userService;
     }
+
     @GetMapping("/home")
     public String home(Model model, Principal principal) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -29,6 +32,7 @@ public class AuthController {
         System.out.println("---------------");
         System.out.println(principal.getName());
         System.out.println(userDetails);
+
         model.addAttribute("login", userDetails.getUsername());
         return "home"; // Убедитесь, что у вас есть шаблон home.html
     }
@@ -41,10 +45,8 @@ public class AuthController {
 
     @PostMapping("/register")
 //    public String registerUser(@RequestParam String login, @RequestParam String password) {
-    public String registerUser(@Valid @ModelAttribute UserRequestDTO userRequestDTO){
-        System.out.println(userRequestDTO.getLogin());
-        System.out.println(userRequestDTO.getPassword());
-        System.out.println(userRequestDTO.getConfirmPassword());
+    public String registerUser(@Valid @ModelAttribute UserRequestDTO userRequestDTO) {
+
         User user = new User();
         user.setLogin(userRequestDTO.getLogin());
         user.setPassword(userRequestDTO.getPassword());
