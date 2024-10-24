@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.w3.org/1999/xhtml" lang="en">
 <head>
     <title>Welcome</title>
+    <link rel="stylesheet" href="home.css">
 </head>
 <body>
 <h2 th:text="'Приветствуем вас пользователь с логином: ' + ${login}"></h2>
@@ -10,6 +11,15 @@
 <br>
 <br>
 <h1 th:text="'Рабочая зона хранилища'"></h1>
+<form action="#" th:action="@{/load}" method="post" enctype="multipart/form-data">>
+    <div class="drop-zone">
+        <span class="drop-zone__prompt">Drop file here or click to upload</span>
+        <input type="file" name="myFile" class="drop-zone__input">
+    </div>
+    <br><br>
+    <button type="submit">Загрузить</button>
+</form>
 
+<script src="home.css"></script>
 </body>
 </html>
