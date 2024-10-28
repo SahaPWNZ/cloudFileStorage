@@ -2,39 +2,51 @@ package com.sahapwnz.cloudfilestorage.controller;
 
 import com.sahapwnz.cloudfilestorage.dto.UserRequestDTO;
 import com.sahapwnz.cloudfilestorage.entity.User;
+import com.sahapwnz.cloudfilestorage.service.FileService;
 import com.sahapwnz.cloudfilestorage.service.UserDetailsImpl;
 import com.sahapwnz.cloudfilestorage.service.UserService;
+import io.minio.errors.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.security.Principal;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
 @Controller
 public class AuthController {
     //глянуть отличия принципла и юзерДетаилс
     private final UserService userService;
+    private final FileService fileService;
 
     @Autowired
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService, FileService fileService) {
         this.userService = userService;
+        this.fileService = fileService;
     }
 
-    @GetMapping("/home")
-    public String home(Model model, Principal principal) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        System.out.println("---------------");
-        System.out.println(principal.getName());
-        System.out.println(userDetails);
-
+    @GetMapping("/")
+    public String home(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam(required = false) String path) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+        String rootPath = "user-" + userDetails.getUser().getId() + "-files";
         model.addAttribute("login", userDetails.getUsername());
-        return "home"; // Убедитесь, что у вас есть шаблон home.html
+
+        System.out.println(path);
+        System.out.println(rootPath);
+        if (path != null) {
+            model.addAttribute("allPath", fileService.getInfoForThisFolder(rootPath + "/" + path));
+        } else {
+
+            model.addAttribute("allPath", fileService.getInfoForThisFolder(rootPath));
+        }
+
+        return "home";
     }
 
     @GetMapping("/register")
@@ -44,7 +56,6 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-//    public String registerUser(@RequestParam String login, @RequestParam String password) {
     public String registerUser(@Valid @ModelAttribute UserRequestDTO userRequestDTO) {
 
         User user = new User();

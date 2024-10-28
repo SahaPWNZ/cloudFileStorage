@@ -24,7 +24,7 @@ public class SecurityConfig {
                         .requestMatchers("/register", "/login", "/error").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form.loginPage("/login")
-                        .defaultSuccessUrl("/home", true).permitAll())
+                        .defaultSuccessUrl("/", true).permitAll())
                 .logout(logout -> logout.permitAll());
         return http.build();
     }

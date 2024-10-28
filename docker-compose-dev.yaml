@@ -13,7 +13,6 @@ services:
     environment:
       MINIO_ACCESS_KEY: minioadmin
       MINIO_SECRET_KEY: minioadmin
-      MINIO_DEFAULT_BUCKETS: user-files
     command: server /data
   postgres:
     image: postgres:13.3
