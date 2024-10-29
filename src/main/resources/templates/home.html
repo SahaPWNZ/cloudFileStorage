@@ -26,6 +26,7 @@
         <div th:if="${!path.endsWith('/')}">
             <form action="#" method="post" th:action="@{/delete-file}">
                 <input type="hidden" name="path" th:value="${path}"/>
+                <input type="hidden" name="prefix" th:value="${prefix}"/>
                 <button type="submit">Удалить файл</button>
             </form>
         </div>
@@ -36,6 +37,7 @@
     <div class="drop-zone">
         <span class="drop-zone__prompt">Drop file here or click to upload</span>
         <input type="file" name="myFile" class="drop-zone__input">
+        <input type="hidden" name="prefix" th:value="${prefix}"/>
     </div>
     <br><br>
     <button type="submit">Загрузить</button>

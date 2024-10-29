@@ -40,9 +40,10 @@ public class AuthController {
         System.out.println(path);
         System.out.println(rootPath);
         if (path != null) {
+            model.addAttribute("prefix", rootPath + "/" + path);
             model.addAttribute("allPath", fileService.getInfoForThisFolder(rootPath + "/" + path));
         } else {
-
+            model.addAttribute("prefix", rootPath);
             model.addAttribute("allPath", fileService.getInfoForThisFolder(rootPath));
         }
 
