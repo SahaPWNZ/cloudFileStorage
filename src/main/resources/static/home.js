@@ -69,3 +69,9 @@ function updateThumbnail(dropZoneElement, file) {
         thumbnailElement.style.backgroundImage = null;
     }
 }
+
+function toggleEdit() {
+    const editSection = document.getElementById('editSection');
+    editSection.classList.toggle('hidden');
+}
+

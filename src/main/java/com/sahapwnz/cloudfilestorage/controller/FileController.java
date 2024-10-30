@@ -31,8 +31,16 @@ public class FileController {
     }
 
     @PostMapping("/create-folder")
-    String createFolder(@RequestParam("folderName") String folderName, @RequestParam("prefix") String prefix){
+    String createFolder(@RequestParam("folderName") String folderName, @RequestParam("prefix") String prefix) {
         fileService.createFolder(folderName, prefix);
+        return "redirect:/";
+    }
+
+    @PostMapping("/rename-file")
+    String renameFile(@RequestParam("oldFileName") String oldFileName, @RequestParam("newFileName") String newFileName,
+                      @RequestParam("prefix") String prefix) {
+        fileService.renameFile(oldFileName, newFileName, prefix);
+
         return "redirect:/";
     }
 

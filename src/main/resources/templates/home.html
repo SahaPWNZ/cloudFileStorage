@@ -5,10 +5,9 @@
     <link rel="stylesheet" th:href="@{/home.css}"/>
 </head>
 <body>
-<h2 th:text="'Приветствуем вас пользователь с логином: ' + ${login}"></h2>
-<br>
-<a href="/logout" class="button">Логаут</a>
-<br>
+<h2 th:text="'Приветствуем вас пользователь с логином: ' + ${login}">
+    <a href="/logout" class="button">Логаут</a>
+</h2>
 <br>
 <h1 th:text="'Рабочая зона хранилища'"></h1>
 <div th:if="${allPath == null || #lists.isEmpty(allPath)}">
@@ -38,6 +37,17 @@
                 <input type="hidden" name="prefix" th:value="${prefix}"/>
                 <button type="submit">Удалить файл</button>
             </form>
+            <img src="/path/to/logo.png" alt="Логотип" id="logo" style="cursor: pointer;" onclick="toggleEdit()"/>
+
+            <div id="editSection" class="hidden">
+                <form action="#" method="post" th:action="@{/rename-file}">
+                    <!--                    <label for="newFileName">Новое имя файла:</label>-->
+                    <input type="text" id="newFileName" name="newFileName" th:value="${path}" required/>
+                    <input type="hidden" name="oldFileName" th:value="${path}"/>
+                    <input type="hidden" name="prefix" th:value="${prefix}"/>
+                    <button type="submit">Сохранить</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -48,7 +58,7 @@
         <input type="file" name="myFile" class="drop-zone__input">
         <input type="hidden" name="prefix" th:value="${prefix}"/>
     </div>
-    <br><br>
+    <br>
     <button type="submit">Загрузить</button>
 </form>
 <h3>Загрузка папок</h3>
@@ -57,7 +67,7 @@
         <span class="drop-zone__prompt">Drop file here or click to upload</span>
         <input type="file" name="myFolder" webkitdirectory multiple>
     </div>
-    <br><br>
+    <br>
     <button type="submit">Загрузить</button>
 </form>
 

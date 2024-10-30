@@ -133,4 +133,25 @@ public class FileService {
             System.out.println(e.getMessage());
         }
     }
+
+    public void renameFile(String oldFileName, String newFileName, String prefix) {
+        try {
+            CopySource source = CopySource.builder()
+                    .bucket("user-files")
+                    .object(prefix + "/" + oldFileName)
+                    .build();
+            minioClient.copyObject(
+                    CopyObjectArgs.builder()
+                            .bucket("user-files")
+                            .object(prefix + "/" + newFileName) // Новое имя файла
+                            .source(source) // Путь к исходному файлу
+                            .build()
+            );
+
+            deleteObject(prefix + "/" + oldFileName);
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }
