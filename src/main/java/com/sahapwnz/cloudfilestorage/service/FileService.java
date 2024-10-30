@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -120,5 +121,16 @@ public class FileService {
 
     }
 
-
+    public void createFolder(String folderName, String prefix) {
+        try {
+            minioClient.putObject(
+                    PutObjectArgs.builder()
+                            .bucket("user-files")
+                            .object(prefix + "/" + folderName + "/")
+                            .stream(InputStream.nullInputStream(), 0, -1)
+                            .build());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }

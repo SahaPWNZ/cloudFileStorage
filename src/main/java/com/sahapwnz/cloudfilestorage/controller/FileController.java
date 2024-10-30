@@ -30,4 +30,10 @@ public class FileController {
         return "redirect:/";
     }
 
+    @PostMapping("/create-folder")
+    String createFolder(@RequestParam("folderName") String folderName, @RequestParam("prefix") String prefix){
+        fileService.createFolder(folderName, prefix);
+        return "redirect:/";
+    }
+
 }
