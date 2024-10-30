@@ -27,7 +27,7 @@
         <h3 th:text="${path}"></h3>
         <div th:if="${path.endsWith('/')}">
             <form action=# method="get" th:action="@{/}">
-                <input type="hidden" name="path" th:value="${path.substring(0, path.length()-1)}"/>
+                <input type="hidden" name="path" th:value="${prefix + '/' + path.substring(0, path.length()-1)}"/>
                 <button type="submit">Перейти в папку</button>
             </form>
         </div>
@@ -66,6 +66,7 @@
     <div class="drop-zone">
         <span class="drop-zone__prompt">Drop file here or click to upload</span>
         <input type="file" name="myFolder" webkitdirectory multiple>
+        <input type="hidden" name="prefix" th:value="${prefix}"/>
     </div>
     <br>
     <button type="submit">Загрузить</button>

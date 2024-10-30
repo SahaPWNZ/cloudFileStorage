@@ -14,6 +14,9 @@ import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class FileService {
@@ -154,4 +157,32 @@ public class FileService {
             System.out.println(e.getMessage());
         }
     }
+
+
+    public void purFolder(MultipartFile[] files, String prefix) {
+        Set<String> setUniquePaths = new HashSet<>();
+        Arrays.stream(files).forEach(file -> {
+            int lastSlashIndex = file.getOriginalFilename().lastIndexOf('/');
+            if (lastSlashIndex != -1) {
+                setUniquePaths.add(file.getOriginalFilename().substring(0, lastSlashIndex)); // Включаем слэш +1,у нас без ласт слэша
+            }
+        });
+
+        setUniquePaths.forEach(path -> createFolder(path, prefix));
+
+        Arrays.stream(files).forEach(file -> {
+            try {
+                minioClient.putObject(PutObjectArgs.builder()
+                        .bucket("user-files")
+                        .object(prefix + "/" + file.getOriginalFilename())
+                        .stream(file.getInputStream(), file.getSize(), -1)
+                        .contentType(file.getContentType())
+                        .build());
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        });
+    }
+
 }
+
