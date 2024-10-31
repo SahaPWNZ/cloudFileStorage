@@ -44,6 +44,15 @@ public class FileController {
         return "redirect:/";
     }
 
+    @PostMapping("/delete-folder")
+    String deleteFolder(@RequestParam("path") String pathToFolder, @RequestParam("prefix") String prefix, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        System.out.println("delete-folder:"+pathToFolder);
+        System.out.println("delete-folder:"+prefix);
+        String rootPath = "user-" + userDetails.getUser().getId() + "-files";
+        fileService.deleteFolder(rootPath+prefix+"/"+pathToFolder);
+        return "redirect:/";
+    }
+
     @PostMapping("/create-folder")
     String createFolder(@RequestParam("folderName") String folderName, @RequestParam("prefix") String prefix, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         System.out.println("prefix: " + prefix);

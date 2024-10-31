@@ -42,7 +42,7 @@ public class FileService {
             Iterable<Result<Item>> resp = minioClient.listObjects(lArgs);
             for (Result<Item> res : resp) {
                 Item i = res.get();
-//                System.out.println("::"+i.objectName());
+                System.out.println("::" + i.objectName());
                 String path = i.objectName().substring(prefix.length() + 1);
 //                System.out.println("----" + path + "----");
                 if (!path.isEmpty()) {
@@ -119,6 +119,28 @@ public class FileService {
         }
     }
 
+    public void deleteFolder(String fullPathToFolder) {
+        try {
+            ListObjectsArgs lArgs = ListObjectsArgs.builder()
+                    .bucket("user-files")
+                    .prefix(fullPathToFolder)
+                    .recursive(true)
+                    .build();
+
+            Iterable<Result<Item>> results = minioClient.listObjects(lArgs);
+            for (Result<Item> result : results) {
+                minioClient.removeObject(
+                        RemoveObjectArgs.builder()
+                                .bucket("user-files")
+                                .object(result.get().objectName())
+                                .build()
+                );
+                System.out.println("Удален объект: " + result.get().objectName());
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
     public void putFolder(MultipartFile[] files, String prefix) {
         Set<String> setUniquePaths = new HashSet<>();
@@ -157,5 +179,7 @@ public class FileService {
             System.out.println(e.getMessage());
         }
     }
+
+
 }
 

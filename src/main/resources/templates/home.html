@@ -29,8 +29,13 @@
         <div th:if="${path.endsWith('/')}">
             <form action=# method="get" th:action="@{/}">
                 <input type="hidden" name="path" th:value="${(prefix == '/') ? path.substring(0, path.length() - 1)
-                       : prefix.substring(1, prefix.length()) + '/' + path.substring(0, path.length() - 1)}"/>/>
+                       : prefix.substring(1, prefix.length()) + '/' + path.substring(0, path.length() - 1)}"/>
                 <button type="submit">Перейти в папку</button>
+            </form>
+            <form action="#" method="post" th:action="@{/delete-folder}">
+                <input type="hidden" name="path" th:value="${path}"/>
+                <input type="hidden" name="prefix" th:value="${prefix == '/' ? '' : prefix}"/>
+                <button type="submit">Удалить папку</button>
             </form>
         </div>
         <div th:if="${!path.endsWith('/')}">
