@@ -31,14 +31,14 @@ public class AuthController {
     public String home(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam(required = false) String path) {
         String rootPath = "user-" + userDetails.getUser().getId() + "-files";
         model.addAttribute("login", userDetails.getUsername());
+        System.out.println("path:" + path);
+        System.out.println("rootPath: " + rootPath);
 
-        System.out.println(path);
-        System.out.println(rootPath);
         if (path != null) {
-            model.addAttribute("prefix", rootPath + "/" + path);
+            model.addAttribute("prefix", "/" + path);
             model.addAttribute("allPath", fileService.getInfoForThisFolder(rootPath + "/" + path));
         } else {
-            model.addAttribute("prefix", rootPath);
+            model.addAttribute("prefix", "/");
             model.addAttribute("allPath", fileService.getInfoForThisFolder(rootPath));
         }
 
@@ -53,12 +53,12 @@ public class AuthController {
 
     @PostMapping("/register")
     public String registerUser(@Valid @ModelAttribute UserRequestDTO userRequestDTO) {
-
         User user = new User();
         user.setLogin(userRequestDTO.getLogin());
         user.setPassword(userRequestDTO.getPassword());
 
         if (userService.saveUser(user)) {
+            fileService.createRootFolder(user.getId());
             return "redirect:/login"; // Перенаправление на страницу входа после успешной регистрации
         } else {
             return "redirect:/register?error"; // Перенаправление обратно на страницу регистрации с ошибкой

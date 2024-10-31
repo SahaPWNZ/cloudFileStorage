@@ -6,12 +6,13 @@
 </head>
 <body>
 <h2 th:text="'Приветствуем вас пользователь с логином: ' + ${login}">
-    <a href="/logout" class="button">Логаут</a>
 </h2>
+<a href="/logout" class="button">Логаут</a>
 <br>
 <h1 th:text="'Рабочая зона хранилища'"></h1>
+<h2 th:text="${'Вы находитесь в директории: ' + prefix}"></h2>
 <div th:if="${allPath == null || #lists.isEmpty(allPath)}">
-    <p>В </p>
+    <p>В данной папке нет файлов/папок</p>
 </div>
 <div>
     <form action="#" method="post" th:action="@{/create-folder}">
@@ -27,7 +28,8 @@
         <h3 th:text="${path}"></h3>
         <div th:if="${path.endsWith('/')}">
             <form action=# method="get" th:action="@{/}">
-                <input type="hidden" name="path" th:value="${prefix + '/' + path.substring(0, path.length()-1)}"/>
+                <input type="hidden" name="path" th:value="${(prefix == '/') ? path.substring(0, path.length() - 1)
+                       : prefix.substring(1, prefix.length()) + '/' + path.substring(0, path.length() - 1)}"/>/>
                 <button type="submit">Перейти в папку</button>
             </form>
         </div>

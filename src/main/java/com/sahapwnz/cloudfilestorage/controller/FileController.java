@@ -22,34 +22,41 @@ public class FileController {
 
     @PostMapping("/load")
     String loadFile(@RequestParam("myFile") MultipartFile file, @RequestParam("prefix") String prefix, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        fileService.putObject(prefix, file);
+        System.out.println("prefix: " + prefix);
+        String rootPath = "user-" + userDetails.getUser().getId() + "-files";
+        fileService.putObject(rootPath + prefix, file);
         return "redirect:/";
     }
 
     @PostMapping("/loadFolder")
-    String loadFolder(@RequestParam("myFolder") MultipartFile[] files, @RequestParam("prefix") String prefix){
-        Arrays.stream(files).forEach(file-> System.out.println("folder:: "+file.getOriginalFilename()));
-        fileService.purFolder(files, prefix);
+    String loadFolder(@RequestParam("myFolder") MultipartFile[] files, @RequestParam("prefix") String prefix, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        String rootPath = "user-" + userDetails.getUser().getId() + "-files";
+        Arrays.stream(files).forEach(file -> System.out.println("folder:: " + file.getOriginalFilename()));
+        fileService.putFolder(files, rootPath + prefix);
         return "redirect:/";
     }
 
     @PostMapping("/delete-file")
-    String deleteFile(@RequestParam("path") String pathToFile, @RequestParam("prefix") String prefix) {
-        fileService.deleteObject(prefix + "/" + pathToFile);
+    String deleteFile(@RequestParam("path") String pathToFile, @RequestParam("prefix") String prefix, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        System.out.println("prefix: " + prefix);
+        String rootPath = "user-" + userDetails.getUser().getId() + "-files";
+        fileService.deleteObject(rootPath + prefix + "/" + pathToFile);
         return "redirect:/";
     }
 
     @PostMapping("/create-folder")
-    String createFolder(@RequestParam("folderName") String folderName, @RequestParam("prefix") String prefix) {
-        fileService.createFolder(folderName, prefix);
+    String createFolder(@RequestParam("folderName") String folderName, @RequestParam("prefix") String prefix, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        System.out.println("prefix: " + prefix);
+        String rootPath = "user-" + userDetails.getUser().getId() + "-files";
+        fileService.createFolder(folderName, rootPath + prefix);
         return "redirect:/";
     }
 
     @PostMapping("/rename-file")
     String renameFile(@RequestParam("oldFileName") String oldFileName, @RequestParam("newFileName") String newFileName,
-                      @RequestParam("prefix") String prefix) {
-        fileService.renameFile(oldFileName, newFileName, prefix);
-
+                      @RequestParam("prefix") String prefix, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        String rootPath = "user-" + userDetails.getUser().getId() + "-files";
+        fileService.renameFile(oldFileName, newFileName, rootPath + prefix);
         return "redirect:/";
     }
 

@@ -30,46 +30,6 @@ public class FileService {
         }
     }
 
-    public boolean checkObjectInBucket(String bucketName, String objectName) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
-        try {
-            minioClient.getObject(
-                    GetObjectArgs.builder()
-                            .bucket(bucketName)
-                            .object(objectName)
-                            .build()
-            );
-            return true; // Объект существует
-        } catch (MinioException e) {
-            if (e.httpTrace().contains("NoSuchKey")) {
-                return false; // Объект не существует
-            } else {
-                throw e; // Обработка других ошибок
-            }
-        }
-    }
-
-    public ArrayList<String> getInfoForThisUser(String prefix) {
-        ArrayList<String> allPathForThisPrefix = new ArrayList<>();
-        try {
-            ListObjectsArgs lArgs = ListObjectsArgs.builder()
-                    .bucket("user-files")
-                    .prefix(prefix)
-                    .recursive(true)
-                    .build();
-
-            Iterable<Result<Item>> resp = minioClient.listObjects(lArgs);
-            for (Result<Item> res : resp) {
-                Item i = res.get();
-                allPathForThisPrefix.add(i.objectName().substring(prefix.length() + 1));
-                System.out.println(":::::::::::" + i.objectName());
-            }
-        } catch (Exception e) {
-            throw new ApplicationException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR) {
-            };
-        }
-        return allPathForThisPrefix;
-    }
-
     public ArrayList<String> getInfoForThisFolder(String prefix) {
         ArrayList<String> allPathForThisPrefix = new ArrayList<>();
         try {
@@ -82,8 +42,9 @@ public class FileService {
             Iterable<Result<Item>> resp = minioClient.listObjects(lArgs);
             for (Result<Item> res : resp) {
                 Item i = res.get();
+//                System.out.println("::"+i.objectName());
                 String path = i.objectName().substring(prefix.length() + 1);
-                System.out.println("----" + path + "----");
+//                System.out.println("----" + path + "----");
                 if (!path.isEmpty()) {
                     if (path.endsWith("/") && path.split("/").length == 1
                             || !path.endsWith("/") && path.split("/").length == 1) {
@@ -159,7 +120,7 @@ public class FileService {
     }
 
 
-    public void purFolder(MultipartFile[] files, String prefix) {
+    public void putFolder(MultipartFile[] files, String prefix) {
         Set<String> setUniquePaths = new HashSet<>();
         Arrays.stream(files).forEach(file -> {
             int lastSlashIndex = file.getOriginalFilename().lastIndexOf('/');
@@ -184,5 +145,17 @@ public class FileService {
         });
     }
 
+    public void createRootFolder(Long id) {
+        try {
+            minioClient.putObject(
+                    PutObjectArgs.builder()
+                            .bucket("user-files")
+                            .object("user-" + id + "-files/")
+                            .stream(InputStream.nullInputStream(), 0, -1)
+                            .build());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }
 
