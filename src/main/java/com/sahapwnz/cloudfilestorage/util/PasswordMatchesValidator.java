@@ -14,10 +14,10 @@ public class PasswordMatchesValidator
     }
 
     @Override
-    public boolean isValid(Object obj, ConstraintValidatorContext context){
+    public boolean isValid(Object obj, ConstraintValidatorContext context) {
         UserRequestDTO user = (UserRequestDTO) obj;
         if (!user.getPassword().equals(user.getConfirmPassword())) {
-            throw new ValidationException("Введенные пароли не совпадают" , HttpStatus.BAD_REQUEST);
+            throw new ValidationException("Введенные пароли не совпадают", HttpStatus.BAD_REQUEST);
         }
         return true;
     }

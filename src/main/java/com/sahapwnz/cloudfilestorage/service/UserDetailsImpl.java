@@ -1,7 +1,9 @@
 package com.sahapwnz.cloudfilestorage.service;
 
 import com.sahapwnz.cloudfilestorage.entity.User;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -27,7 +29,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-   return Collections.emptyList();
+        return Collections.emptyList();
     }
 
     @Override
