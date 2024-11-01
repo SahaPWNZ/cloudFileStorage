@@ -111,9 +111,44 @@ public class FileService {
                             .source(source) // Путь к исходному файлу
                             .build()
             );
-
             deleteObject(prefix + "/" + oldFileName);
 
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void renameFolder(String oldFolderName, String newFolderName, String prefix) {
+        try {
+//            System.out.println("old::" + oldFolderName);
+//            System.out.println("new::" + newFolderName);
+//            System.out.println("pref::" + prefix);
+            ListObjectsArgs lArgs = ListObjectsArgs.builder()
+                    .bucket("user-files")
+                    .prefix(prefix + oldFolderName)
+                    .recursive(true)
+                    .build();
+            Iterable<Result<Item>> filesInFolder = minioClient.listObjects(lArgs);
+            for (Result<Item> pathToFile : filesInFolder) {
+                String oldPathToFile = pathToFile.get().objectName();
+                String newPathToFile = oldPathToFile.replace(oldFolderName, newFolderName);
+//                System.out.println(oldPathToFile + "::old");
+//                System.out.println(newPathToFile + "::new");
+
+                CopySource source = CopySource.builder()
+                        .bucket("user-files")
+                        .object(oldPathToFile)
+                        .build();
+
+                minioClient.copyObject(
+                        CopyObjectArgs.builder()
+                                .bucket("user-files")
+                                .object(newPathToFile) // Новое имя файла
+                                .source(source) // Путь к исходному файлу
+                                .build());
+
+                deleteObject(oldPathToFile);
+            }
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

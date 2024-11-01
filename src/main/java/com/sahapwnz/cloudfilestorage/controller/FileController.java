@@ -69,4 +69,12 @@ public class FileController {
         return "redirect:/";
     }
 
+    @PostMapping("/rename-folder")
+    String renameFolder(@RequestParam("oldFolderName") String oldFolderName, @RequestParam("newFolderName") String newFolderName,
+                        @RequestParam("prefix") String prefix, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        String rootPath = "user-" + userDetails.getUser().getId() + "-files";
+        fileService.renameFolder(oldFolderName, newFolderName, rootPath + prefix + "/");
+        return "redirect:/";
+    }
+
 }

@@ -38,7 +38,7 @@ public class AuthController {
             model.addAttribute("prefix", "/" + path);
             model.addAttribute("allPath", fileService.getInfoForThisFolder(rootPath + "/" + path));
         } else {
-            model.addAttribute("prefix", "/");
+            model.addAttribute("prefix", "");
             model.addAttribute("allPath", fileService.getInfoForThisFolder(rootPath));
         }
 

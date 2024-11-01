@@ -70,8 +70,12 @@ function updateThumbnail(dropZoneElement, file) {
     }
 }
 
-function toggleEdit() {
-    const editSection = document.getElementById('editSection');
+function toggleEdit1() {
+    const editSection = document.getElementById('editSection1');
+    editSection.classList.toggle('hidden');
+}
+function toggleEdit2() {
+    const editSection = document.getElementById('editSection2');
     editSection.classList.toggle('hidden');
 }
 

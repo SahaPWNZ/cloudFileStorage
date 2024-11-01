@@ -28,7 +28,7 @@
         <h3 th:text="${path}"></h3>
         <div th:if="${path.endsWith('/')}">
             <form action=# method="get" th:action="@{/}">
-                <input type="hidden" name="path" th:value="${(prefix == '/') ? path.substring(0, path.length() - 1)
+                <input type="hidden" name="path" th:value="${(prefix == '') ? path.substring(0, path.length() - 1)
                        : prefix.substring(1, prefix.length()) + '/' + path.substring(0, path.length() - 1)}"/>
                 <button type="submit">Перейти в папку</button>
             </form>
@@ -37,6 +37,18 @@
                 <input type="hidden" name="prefix" th:value="${prefix == '/' ? '' : prefix}"/>
                 <button type="submit">Удалить папку</button>
             </form>
+            <img src="/path/to/logo.png" alt="Логотип" style="cursor: pointer;" onclick="toggleEdit1()"/>
+            <div id="editSection1" class="hidden">
+                <form action="#" method="post" th:action="@{/rename-folder}">
+                    <!--                    <label for="newFileName">Новое имя файла:</label>-->
+                    <input type="text" id="newFolderName" name="newFolderName" th:value="${path}" required/>
+                    <input type="hidden" name="oldFolderName" th:value="${path}"/>
+                    <input type="hidden" name="prefix" th:value="${prefix}"/>
+                    <button type="submit">Сохранить</button>
+                </form>
+            </div>
+
+
         </div>
         <div th:if="${!path.endsWith('/')}">
             <form action="#" method="post" th:action="@{/delete-file}">
@@ -44,9 +56,9 @@
                 <input type="hidden" name="prefix" th:value="${prefix}"/>
                 <button type="submit">Удалить файл</button>
             </form>
-            <img src="/path/to/logo.png" alt="Логотип" id="logo" style="cursor: pointer;" onclick="toggleEdit()"/>
 
-            <div id="editSection" class="hidden">
+            <img src="/path/to/logo.png" alt="Логотип" id="logo" style="cursor: pointer;" onclick="toggleEdit2()"/>
+            <div id="editSection2" class="hidden">
                 <form action="#" method="post" th:action="@{/rename-file}">
                     <!--                    <label for="newFileName">Новое имя файла:</label>-->
                     <input type="text" id="newFileName" name="newFileName" th:value="${path}" required/>
@@ -55,6 +67,7 @@
                     <button type="submit">Сохранить</button>
                 </form>
             </div>
+
         </div>
     </div>
 </div>
