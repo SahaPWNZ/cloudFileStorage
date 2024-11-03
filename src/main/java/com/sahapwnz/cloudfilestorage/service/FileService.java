@@ -4,6 +4,7 @@ import com.sahapwnz.cloudfilestorage.exception.ApplicationException;
 import io.minio.*;
 import io.minio.errors.*;
 import io.minio.messages.Item;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Service
 public class FileService {
@@ -216,5 +219,49 @@ public class FileService {
     }
 
 
+    public InputStream downloadFile(String objectPath) {
+        InputStream stream = null;
+        try {
+            stream = minioClient.getObject(
+                    GetObjectArgs.builder()
+                            .bucket("user-files")
+                            .object(objectPath)
+                            .build()
+            );
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return stream;
+    }
+
+    public void downloadFolder(String folderPath, ZipOutputStream zipOut) {
+        try {
+            Iterable<Result<Item>> results = minioClient.listObjects(
+                    ListObjectsArgs.builder()
+                            .bucket("user-files")
+                            .prefix(folderPath)
+                            .recursive(true)
+                            .build()
+            );
+
+            for (Result<Item> result : results) {
+                Item item = result.get();
+                InputStream inputStream = minioClient.getObject(
+                        GetObjectArgs.builder()
+                                .bucket("user-files")
+                                .object(item.objectName())
+                                .build()
+                );
+
+                ZipEntry zipEntry = new ZipEntry(item.objectName().substring(folderPath.length()));
+                zipOut.putNextEntry(zipEntry);
+                IOUtils.copy(inputStream, zipOut);
+                zipOut.closeEntry();
+            }
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+    }
 }
 

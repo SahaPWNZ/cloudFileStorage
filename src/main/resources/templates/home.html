@@ -37,6 +37,12 @@
                 <input type="hidden" name="prefix" th:value="${prefix == '/' ? '' : prefix}"/>
                 <button type="submit">Удалить папку</button>
             </form>
+            <form action="#" method="get" th:action="@{/download-folder}">
+                <input type="hidden" name="path" th:value="${path}"/>
+                <input type="hidden" name="prefix" th:value="${prefix}"/>
+                <button type="submit">Скачать папку</button>
+            </form>
+
             <img src="/path/to/logo.png" alt="Логотип" style="cursor: pointer;" onclick="toggleEdit1()"/>
             <div id="editSection1" class="hidden">
                 <form action="#" method="post" th:action="@{/rename-folder}">
@@ -48,13 +54,17 @@
                 </form>
             </div>
 
-
         </div>
         <div th:if="${!path.endsWith('/')}">
             <form action="#" method="post" th:action="@{/delete-file}">
                 <input type="hidden" name="path" th:value="${path}"/>
                 <input type="hidden" name="prefix" th:value="${prefix}"/>
                 <button type="submit">Удалить файл</button>
+            </form>
+            <form action="#" method="get" th:action="@{/download-file}">
+                <input type="hidden" name="path" th:value="${path}"/>
+                <input type="hidden" name="prefix" th:value="${prefix}"/>
+                <button type="submit">Скачать файл</button>
             </form>
 
             <img src="/path/to/logo.png" alt="Логотип" id="logo" style="cursor: pointer;" onclick="toggleEdit2()"/>

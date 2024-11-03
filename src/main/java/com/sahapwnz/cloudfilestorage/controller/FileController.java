@@ -2,14 +2,25 @@ package com.sahapwnz.cloudfilestorage.controller;
 
 import com.sahapwnz.cloudfilestorage.service.FileService;
 import com.sahapwnz.cloudfilestorage.service.UserDetailsImpl;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
+import java.util.zip.ZipOutputStream;
 
 @Controller
 public class FileController {
@@ -75,6 +86,36 @@ public class FileController {
         String rootPath = "user-" + userDetails.getUser().getId() + "-files";
         fileService.renameFolder(oldFolderName, newFolderName, rootPath + prefix + "/");
         return "redirect:/";
+    }
+
+
+    @GetMapping("/download-file")
+    ResponseEntity<Resource> downloadFile(@RequestParam("prefix") String prefix, @RequestParam("path") String fileName,
+                                          @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        String rootPath = "user-" + userDetails.getUser().getId() + "-files";
+        InputStream inputStream = fileService.downloadFile(rootPath + prefix + "/" + fileName);
+        Resource resource = new InputStreamResource(inputStream);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
+    }
+
+    @GetMapping("/download-folder")
+    ResponseEntity<byte[]> downloadFolder(@RequestParam("prefix") String prefix, @RequestParam("path") String folderName,
+                                          @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletResponse response) throws IOException {
+        String rootPath = "user-" + userDetails.getUser().getId() + "-files";
+
+        ByteArrayOutputStream zipOutputStream = new ByteArrayOutputStream();
+        ZipOutputStream zipOut = new ZipOutputStream(zipOutputStream);
+
+        fileService.downloadFolder(rootPath + prefix + "/" + folderName, zipOut);
+        zipOut.close();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"files.zip\"")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(zipOutputStream.toByteArray());
     }
 
 }
