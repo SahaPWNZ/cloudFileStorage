@@ -1,5 +1,6 @@
 package com.sahapwnz.cloudfilestorage.service;
 
+import com.sahapwnz.cloudfilestorage.dto.FileResponseDTO;
 import com.sahapwnz.cloudfilestorage.exception.ApplicationException;
 import io.minio.*;
 import io.minio.errors.*;
@@ -258,10 +259,48 @@ public class FileService {
                 IOUtils.copy(inputStream, zipOut);
                 zipOut.closeEntry();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
 
+    }
+
+    public ArrayList<FileResponseDTO> search(String query, String rootPath) {
+        ArrayList<FileResponseDTO> list = new ArrayList<>();
+        try {
+
+
+            Iterable<Result<Item>> results = minioClient.listObjects(
+                    ListObjectsArgs.builder()
+                            .bucket("user-files")
+                            .prefix(rootPath)
+                            .recursive(true)
+                            .build());
+            for (Result<Item> result : results) {
+                if (result.get().objectName().contains(query)) {
+                    String str = result.get().objectName();
+                    String[] parts = str.split("/");
+                    System.out.println(Arrays.toString(parts));
+                    if (parts[parts.length - 1].contains(query)) {
+                        list.add(FileResponseDTO.builder()
+                                .name(parts[parts.length - 1])
+                                .prefix(bildPath(parts))
+                                .build());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return list;
+    }
+
+    private String bildPath(String[] parts) {
+        if (parts.length <= 2) {
+            return ""; // Если массив содержит только один элемент, возвращаем пустую строку
+        }
+        String[] subParts = Arrays.copyOfRange(parts, 1, parts.length-1); // Копируем подмассив начиная со второго элемента
+        return String.join("/", subParts); // Объединяем с "/" и добавляем перед ним "/"
     }
 }
 

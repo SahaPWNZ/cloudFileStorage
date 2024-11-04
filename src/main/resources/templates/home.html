@@ -15,9 +15,17 @@
     <p>В данной папке нет файлов/папок</p>
 </div>
 <div>
+    <form action="#" method="get" th:action="@{/search}">
+        <label> Строка поиска папок/файлов:
+            <input type="text" name="query" required/>
+        </label>
+        <button type="submit">поиск</button>
+    </form>
+</div>
+<div>
     <form action="#" method="post" th:action="@{/create-folder}">
         <label> Имя новой папки:
-            <input type="text" name="folderName" placeholder="Введите имя папки" required>
+            <input type="text" name="folderName" placeholder="Введите имя папки" required/>
             <input type="hidden" name="prefix" th:value="${prefix}"/>
         </label>
         <button type="submit">Создать папку</button>

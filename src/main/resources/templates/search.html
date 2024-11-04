@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div>
+    <form action="#" method="get" th:action="@{/search}">
+        <label> Строка поиска папок/файлов:
+            <input type="text" name="query" required/>
+        </label>
+        <button type="submit">поиск</button>
+    </form>
+</div>
+<h2>Результаты поиска:</h2>
+<div th:if="${#lists.isEmpty(results)}">
+    <p>Ничего не найдено.</p>
+    <a href="/" th:text="'Перейти в домашнюю директорию'">Перейти в домашнюю директорию</a>
+</div>
+<div th:if="${!#lists.isEmpty(results)}">
+    <ul>
+        <li th:each="el : ${results}">
+            <!--                <a th:href="@{/(path=${el.getPrefix()})}" th:text="${el.getName()}"></a>-->
+            <a th:if="${el.getPrefix() == ''}" th:href="@{/}" th:text="${el.getName()}"></a>
+            <a th:if="${el.getPrefix() != ''}" th:href="@{/(path=${el.getPrefix()})}" th:text="${el.getName()}"></a>
+        </li>
+    </ul>
+</div>
+
+<h1 th:text="${query}"></h1>
+</body>
+</html>

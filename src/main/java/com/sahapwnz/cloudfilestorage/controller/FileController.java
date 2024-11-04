@@ -2,7 +2,6 @@ package com.sahapwnz.cloudfilestorage.controller;
 
 import com.sahapwnz.cloudfilestorage.service.FileService;
 import com.sahapwnz.cloudfilestorage.service.UserDetailsImpl;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -11,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -104,7 +104,7 @@ public class FileController {
 
     @GetMapping("/download-folder")
     ResponseEntity<byte[]> downloadFolder(@RequestParam("prefix") String prefix, @RequestParam("path") String folderName,
-                                          @AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletResponse response) throws IOException {
+                                          @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         String rootPath = "user-" + userDetails.getUser().getId() + "-files";
 
         ByteArrayOutputStream zipOutputStream = new ByteArrayOutputStream();
@@ -118,4 +118,15 @@ public class FileController {
                 .body(zipOutputStream.toByteArray());
     }
 
+    @GetMapping("/search")
+    String search(Model model, @RequestParam("query") String query,
+                  @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        String rootPath = "user-" + userDetails.getUser().getId() + "-files";
+        var results = fileService.search(query, rootPath);
+
+        model.addAttribute("query", query);
+        model.addAttribute("results", results);
+        results.forEach(System.out::println);
+        return "search";
+    }
 }
