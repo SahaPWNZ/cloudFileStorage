@@ -2,6 +2,7 @@ package com.sahapwnz.cloudfilestorage.controller;
 
 import com.sahapwnz.cloudfilestorage.dto.UserRequestDTO;
 import com.sahapwnz.cloudfilestorage.entity.User;
+import com.sahapwnz.cloudfilestorage.service.BreadcrumbsService;
 import com.sahapwnz.cloudfilestorage.service.FileService;
 import com.sahapwnz.cloudfilestorage.service.UserDetailsImpl;
 import com.sahapwnz.cloudfilestorage.service.UserService;
@@ -20,11 +21,13 @@ public class AuthController {
     //глянуть отличия принципла и юзерДетаилс
     private final UserService userService;
     private final FileService fileService;
+    private final BreadcrumbsService breadcrumbsService;
 
     @Autowired
-    public AuthController(UserService userService, FileService fileService) {
+    public AuthController(UserService userService, FileService fileService, BreadcrumbsService breadcrumbsService) {
         this.userService = userService;
         this.fileService = fileService;
+        this.breadcrumbsService = breadcrumbsService;
     }
 
     @GetMapping("/")
@@ -33,7 +36,8 @@ public class AuthController {
         model.addAttribute("login", userDetails.getUsername());
         System.out.println("path:" + path);
         System.out.println("rootPath: " + rootPath);
-
+        System.out.println("bread:" + breadcrumbsService.getBreadcrumbsForPath(path));
+        model.addAttribute("breadcrumbs", breadcrumbsService.getBreadcrumbsForPath(path));
         if (path != null) {
             model.addAttribute("prefix", "/" + path);
             model.addAttribute("allPath", fileService.getInfoForThisFolder(rootPath + "/" + path));
@@ -41,7 +45,6 @@ public class AuthController {
             model.addAttribute("prefix", "");
             model.addAttribute("allPath", fileService.getInfoForThisFolder(rootPath));
         }
-
         return "home";
     }
 

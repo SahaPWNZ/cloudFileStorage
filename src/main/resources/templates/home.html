@@ -14,6 +14,19 @@
 <div th:if="${allPath == null || #lists.isEmpty(allPath)}">
     <p>В данной папке нет файлов/папок</p>
 </div>
+<br>
+<div>
+    <a th:if="${breadcrumbs == ''}" style="pointer-events: none; color: rgb(128,128,128);">
+        <img th:src="@{/images/example.png}" alt="Вернуться" style="cursor: not-allowed;" />
+    </a>
+    <a th:if="${breadcrumbs == '/'}" th:href="@{/}">
+        <img th:src="@{/images/example.png}" alt="Вернуться" />
+    </a>
+    <a th:if="${breadcrumbs != '' and breadcrumbs != '/'}" th:href="@{/(path=${breadcrumbs})}">
+        <img th:src="@{/images/example.png}" alt="Вернуться" />
+    </a>
+</div>
+<br>
 <div>
     <form action="#" method="get" th:action="@{/search}">
         <label> Строка поиска папок/файлов:
@@ -51,11 +64,11 @@
                 <button type="submit">Скачать папку</button>
             </form>
 
-            <img src="/path/to/logo.png" alt="Логотип" style="cursor: pointer;" onclick="toggleEdit1()"/>
+            <img src="" alt="Логотип" style="cursor: pointer;" onclick="toggleEdit1()"/>
             <div id="editSection1" class="hidden">
                 <form action="#" method="post" th:action="@{/rename-folder}">
                     <!--                    <label for="newFileName">Новое имя файла:</label>-->
-                    <input type="text" id="newFolderName" name="newFolderName" th:value="${path}" required/>
+                    <label for="newFolderName"></label><input type="text" id="newFolderName" name="newFolderName" th:value="${path}" required/>
                     <input type="hidden" name="oldFolderName" th:value="${path}"/>
                     <input type="hidden" name="prefix" th:value="${prefix}"/>
                     <button type="submit">Сохранить</button>
@@ -75,11 +88,11 @@
                 <button type="submit">Скачать файл</button>
             </form>
 
-            <img src="/path/to/logo.png" alt="Логотип" id="logo" style="cursor: pointer;" onclick="toggleEdit2()"/>
+            <img src="" alt="Логотип" id="logo" style="cursor: pointer;" onclick="toggleEdit2()"/>
             <div id="editSection2" class="hidden">
                 <form action="#" method="post" th:action="@{/rename-file}">
                     <!--                    <label for="newFileName">Новое имя файла:</label>-->
-                    <input type="text" id="newFileName" name="newFileName" th:value="${path}" required/>
+                    <label for="newFileName"></label><input type="text" id="newFileName" name="newFileName" th:value="${path}" required/>
                     <input type="hidden" name="oldFileName" th:value="${path}"/>
                     <input type="hidden" name="prefix" th:value="${prefix}"/>
                     <button type="submit">Сохранить</button>

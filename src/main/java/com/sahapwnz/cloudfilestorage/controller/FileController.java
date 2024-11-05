@@ -2,6 +2,7 @@ package com.sahapwnz.cloudfilestorage.controller;
 
 import com.sahapwnz.cloudfilestorage.service.FileService;
 import com.sahapwnz.cloudfilestorage.service.UserDetailsImpl;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -32,65 +33,94 @@ public class FileController {
     }
 
     @PostMapping("/load")
-    String loadFile(@RequestParam("myFile") MultipartFile file, @RequestParam("prefix") String prefix, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    String loadFile(@RequestParam("myFile") MultipartFile file,
+                    @RequestParam("prefix") String prefix,
+                    @AuthenticationPrincipal UserDetailsImpl userDetails,
+                    HttpServletRequest request) {
         System.out.println("prefix: " + prefix);
         String rootPath = "user-" + userDetails.getUser().getId() + "-files";
         fileService.putObject(rootPath + prefix, file);
-        return "redirect:/";
+
+        return "redirect:" + request.getHeader("Referer");
     }
 
     @PostMapping("/loadFolder")
-    String loadFolder(@RequestParam("myFolder") MultipartFile[] files, @RequestParam("prefix") String prefix, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    String loadFolder(@RequestParam("myFolder") MultipartFile[] files,
+                      @RequestParam("prefix") String prefix,
+                      @AuthenticationPrincipal UserDetailsImpl userDetails,
+                      HttpServletRequest request) {
         String rootPath = "user-" + userDetails.getUser().getId() + "-files";
         Arrays.stream(files).forEach(file -> System.out.println("folder:: " + file.getOriginalFilename()));
         fileService.putFolder(files, rootPath + prefix);
-        return "redirect:/";
+
+        return "redirect:" + request.getHeader("Referer");
     }
 
     @PostMapping("/delete-file")
-    String deleteFile(@RequestParam("path") String pathToFile, @RequestParam("prefix") String prefix, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    String deleteFile(@RequestParam("path") String pathToFile,
+                      @RequestParam("prefix") String prefix,
+                      @AuthenticationPrincipal UserDetailsImpl userDetails,
+                      HttpServletRequest request) {
         System.out.println("prefix: " + prefix);
         String rootPath = "user-" + userDetails.getUser().getId() + "-files";
         fileService.deleteObject(rootPath + prefix + "/" + pathToFile);
-        return "redirect:/";
+
+        return "redirect:" + request.getHeader("Referer");
+
     }
 
     @PostMapping("/delete-folder")
-    String deleteFolder(@RequestParam("path") String pathToFolder, @RequestParam("prefix") String prefix, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    String deleteFolder(@RequestParam("path") String pathToFolder,
+                        @RequestParam("prefix") String prefix,
+                        @AuthenticationPrincipal UserDetailsImpl userDetails,
+                        HttpServletRequest request) {
         System.out.println("delete-folder:" + pathToFolder);
         System.out.println("delete-folder:" + prefix);
         String rootPath = "user-" + userDetails.getUser().getId() + "-files";
         fileService.deleteFolder(rootPath + prefix + "/" + pathToFolder);
-        return "redirect:/";
+
+        return "redirect:" + request.getHeader("Referer");
     }
 
     @PostMapping("/create-folder")
-    String createFolder(@RequestParam("folderName") String folderName, @RequestParam("prefix") String prefix, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    String createFolder(@RequestParam("folderName") String folderName,
+                        @RequestParam("prefix") String prefix,
+                        @AuthenticationPrincipal UserDetailsImpl userDetails,
+                        HttpServletRequest request) {
         System.out.println("prefix: " + prefix);
         String rootPath = "user-" + userDetails.getUser().getId() + "-files";
         fileService.createFolder(folderName, rootPath + prefix);
-        return "redirect:/";
+
+        return "redirect:" + request.getHeader("Referer");
     }
 
     @PostMapping("/rename-file")
-    String renameFile(@RequestParam("oldFileName") String oldFileName, @RequestParam("newFileName") String newFileName,
-                      @RequestParam("prefix") String prefix, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    String renameFile(@RequestParam("oldFileName") String oldFileName,
+                      @RequestParam("newFileName") String newFileName,
+                      @RequestParam("prefix") String prefix,
+                      @AuthenticationPrincipal UserDetailsImpl userDetails,
+                      HttpServletRequest request) {
         String rootPath = "user-" + userDetails.getUser().getId() + "-files";
         fileService.renameFile(oldFileName, newFileName, rootPath + prefix);
-        return "redirect:/";
+
+        return "redirect:" + request.getHeader("Referer");
     }
 
     @PostMapping("/rename-folder")
-    String renameFolder(@RequestParam("oldFolderName") String oldFolderName, @RequestParam("newFolderName") String newFolderName,
-                        @RequestParam("prefix") String prefix, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    String renameFolder(@RequestParam("oldFolderName") String oldFolderName,
+                        @RequestParam("newFolderName") String newFolderName,
+                        @RequestParam("prefix") String prefix,
+                        @AuthenticationPrincipal UserDetailsImpl userDetails,
+                        HttpServletRequest request) {
         String rootPath = "user-" + userDetails.getUser().getId() + "-files";
         fileService.renameFolder(oldFolderName, newFolderName, rootPath + prefix + "/");
-        return "redirect:/";
+
+        return "redirect:" + request.getHeader("Referer");
     }
 
-
     @GetMapping("/download-file")
-    ResponseEntity<Resource> downloadFile(@RequestParam("prefix") String prefix, @RequestParam("path") String fileName,
+    ResponseEntity<Resource> downloadFile(@RequestParam("prefix") String prefix,
+                                          @RequestParam("path") String fileName,
                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
         String rootPath = "user-" + userDetails.getUser().getId() + "-files";
         InputStream inputStream = fileService.downloadFile(rootPath + prefix + "/" + fileName);
@@ -103,7 +133,8 @@ public class FileController {
     }
 
     @GetMapping("/download-folder")
-    ResponseEntity<byte[]> downloadFolder(@RequestParam("prefix") String prefix, @RequestParam("path") String folderName,
+    ResponseEntity<byte[]> downloadFolder(@RequestParam("prefix") String prefix,
+                                          @RequestParam("path") String folderName,
                                           @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
         String rootPath = "user-" + userDetails.getUser().getId() + "-files";
 
@@ -119,7 +150,8 @@ public class FileController {
     }
 
     @GetMapping("/search")
-    String search(Model model, @RequestParam("query") String query,
+    String search(Model model,
+                  @RequestParam("query") String query,
                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
         String rootPath = "user-" + userDetails.getUser().getId() + "-files";
         var results = fileService.search(query, rootPath);

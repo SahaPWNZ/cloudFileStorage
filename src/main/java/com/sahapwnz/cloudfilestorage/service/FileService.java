@@ -15,10 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -47,14 +44,17 @@ public class FileService {
             for (Result<Item> res : resp) {
                 Item i = res.get();
                 System.out.println("::" + i.objectName());
-                String path = i.objectName().substring(prefix.length() + 1);
-//                System.out.println("----" + path + "----");
-                if (!path.isEmpty()) {
-                    if (path.endsWith("/") && path.split("/").length == 1
-                            || !path.endsWith("/") && path.split("/").length == 1) {
-                        allPathForThisPrefix.add(path);
+                if (i.objectName().substring(prefix.length()).startsWith("/")) {
+                    String path = i.objectName().substring(prefix.length() + 1);
+                    if (!path.isEmpty()) {
+                        if (path.endsWith("/") && path.split("/").length == 1
+                                || !path.endsWith("/") && path.split("/").length == 1) {
+                            System.out.println("---" + path + "---");
+                            allPathForThisPrefix.add(path);
+                        }
                     }
                 }
+
             }
         } catch (Exception e) {
             throw new ApplicationException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR) {
@@ -124,9 +124,6 @@ public class FileService {
 
     public void renameFolder(String oldFolderName, String newFolderName, String prefix) {
         try {
-//            System.out.println("old::" + oldFolderName);
-//            System.out.println("new::" + newFolderName);
-//            System.out.println("pref::" + prefix);
             ListObjectsArgs lArgs = ListObjectsArgs.builder()
                     .bucket("user-files")
                     .prefix(prefix + oldFolderName)
@@ -136,8 +133,6 @@ public class FileService {
             for (Result<Item> pathToFile : filesInFolder) {
                 String oldPathToFile = pathToFile.get().objectName();
                 String newPathToFile = oldPathToFile.replace(oldFolderName, newFolderName);
-//                System.out.println(oldPathToFile + "::old");
-//                System.out.println(newPathToFile + "::new");
 
                 CopySource source = CopySource.builder()
                         .bucket("user-files")
@@ -184,7 +179,7 @@ public class FileService {
     public void putFolder(MultipartFile[] files, String prefix) {
         Set<String> setUniquePaths = new HashSet<>();
         Arrays.stream(files).forEach(file -> {
-            int lastSlashIndex = file.getOriginalFilename().lastIndexOf('/');
+            int lastSlashIndex = Objects.requireNonNull(file.getOriginalFilename()).lastIndexOf('/');
             if (lastSlashIndex != -1) {
                 setUniquePaths.add(file.getOriginalFilename().substring(0, lastSlashIndex)); // Включаем слэш +1,у нас без ласт слэша
             }
@@ -284,7 +279,7 @@ public class FileService {
                     if (parts[parts.length - 1].contains(query)) {
                         list.add(FileResponseDTO.builder()
                                 .name(parts[parts.length - 1])
-                                .prefix(bildPath(parts))
+                                .prefix(buildPath(parts))
                                 .build());
                     }
                 }
@@ -295,11 +290,11 @@ public class FileService {
         return list;
     }
 
-    private String bildPath(String[] parts) {
+    private String buildPath(String[] parts) {
         if (parts.length <= 2) {
             return ""; // Если массив содержит только один элемент, возвращаем пустую строку
         }
-        String[] subParts = Arrays.copyOfRange(parts, 1, parts.length-1); // Копируем подмассив начиная со второго элемента
+        String[] subParts = Arrays.copyOfRange(parts, 1, parts.length - 1); // Копируем подмассив начиная со второго элемента
         return String.join("/", subParts); // Объединяем с "/" и добавляем перед ним "/"
     }
 }
