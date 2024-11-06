@@ -70,12 +70,13 @@ function updateThumbnail(dropZoneElement, file) {
     }
 }
 
-function toggleEdit1() {
-    const editSection = document.getElementById('editSection1');
-    editSection.classList.toggle('hidden');
-}
-function toggleEdit2() {
-    const editSection = document.getElementById('editSection2');
-    editSection.classList.toggle('hidden');
+function toggleEdit(sectionId) {
+    console.log('Toggling section:', sectionId); // Для отладки
+    const editSection = document.getElementById(sectionId);
+    if (editSection) {
+        editSection.classList.toggle('hidden');
+    } else {
+        console.error('Element not found:', sectionId); // Если элемент не найден
+    }
 }
 

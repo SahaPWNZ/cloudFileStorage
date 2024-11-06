@@ -66,7 +66,6 @@ public class FileController {
         fileService.deleteObject(rootPath + prefix + "/" + pathToFile);
 
         return "redirect:" + request.getHeader("Referer");
-
     }
 
     @PostMapping("/delete-folder")

@@ -21,7 +21,6 @@
 <div th:if="${!#lists.isEmpty(results)}">
     <ul>
         <li th:each="el : ${results}">
-            <!--                <a th:href="@{/(path=${el.getPrefix()})}" th:text="${el.getName()}"></a>-->
             <a th:if="${el.getPrefix() == ''}" th:href="@{/}" th:text="${el.getName()}"></a>
             <a th:if="${el.getPrefix() != ''}" th:href="@{/(path=${el.getPrefix()})}" th:text="${el.getName()}"></a>
         </li>

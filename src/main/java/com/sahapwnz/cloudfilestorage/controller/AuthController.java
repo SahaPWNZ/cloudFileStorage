@@ -34,9 +34,6 @@ public class AuthController {
     public String home(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam(required = false) String path) {
         String rootPath = "user-" + userDetails.getUser().getId() + "-files";
         model.addAttribute("login", userDetails.getUsername());
-        System.out.println("path:" + path);
-        System.out.println("rootPath: " + rootPath);
-        System.out.println("bread:" + breadcrumbsService.getBreadcrumbsForPath(path));
         model.addAttribute("breadcrumbs", breadcrumbsService.getBreadcrumbsForPath(path));
         if (path != null) {
             model.addAttribute("prefix", "/" + path);

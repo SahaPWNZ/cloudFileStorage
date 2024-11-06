@@ -40,27 +40,29 @@ public class FileService {
                     .recursive(true)
                     .build();
 
-            Iterable<Result<Item>> resp = minioClient.listObjects(lArgs);
-            for (Result<Item> res : resp) {
-                Item i = res.get();
-                System.out.println("::" + i.objectName());
-                if (i.objectName().substring(prefix.length()).startsWith("/")) {
-                    String path = i.objectName().substring(prefix.length() + 1);
-                    if (!path.isEmpty()) {
-                        if (path.endsWith("/") && path.split("/").length == 1
-                                || !path.endsWith("/") && path.split("/").length == 1) {
-                            System.out.println("---" + path + "---");
-                            allPathForThisPrefix.add(path);
-                        }
+            for (Result<Item> res : minioClient.listObjects(lArgs)) {
+                String relativePath = res.get().objectName();
+                if (relativePath.substring(prefix.length()).startsWith("/")) {
+                    String path = relativePath.substring(prefix.length() + 1);
+                    if (!path.isEmpty() && path.split("/").length == 1) {
+                        allPathForThisPrefix.add(path);
                     }
                 }
-
             }
         } catch (Exception e) {
             throw new ApplicationException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR) {
             };
         }
         return allPathForThisPrefix;
+    }
+
+    private boolean isValidPath(String objectName, String prefix) {
+        String relativePath = objectName.substring(prefix.length());
+        return relativePath.startsWith("/") && relativePath.split("/").length == 1;
+    }
+
+    private String extractPath(String objectName, String prefix) {
+        return objectName.substring(prefix.length() + 1);
     }
 
     public void deleteObject(String fullPath) {
@@ -299,3 +301,15 @@ public class FileService {
     }
 }
 
+//for (Result<Item> res : minioClient.listObjects(lArgs)) {
+//        Item item = res.get();
+//        String relativePath = item.objectName().substring(prefix.length());
+//
+//        if (!relativePath.isEmpty() && relativePath.startsWith("/")) {
+//        String path = relativePath.substring(1);
+//        if (path.split("/").length == 1) {
+//        System.out.println("---" + path + "---");
+//        allPathForThisPrefix.add(path);
+//        }
+//        }
+//        }
