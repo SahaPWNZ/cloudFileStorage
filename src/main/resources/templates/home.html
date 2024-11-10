@@ -3,124 +3,125 @@
 <head>
     <title>Welcome</title>
     <meta charset="UTF-8">
-    <link rel="stylesheet" th:href="@{/home.css}"/>
+    <link rel="stylesheet" th:href="@{/home1.css}"/>
 </head>
 <body>
-<h2 th:text="'Приветствуем вас пользователь с логином: ' + ${login}">
-</h2>
-<a href="/logout" class="button">Логаут</a>
-<br>
-<h1 th:text="'Рабочая зона хранилища'"></h1>
-<h2 th:text="${'Вы находитесь в директории: ' + prefix}"></h2>
-<div th:if="${allPath == null || #lists.isEmpty(allPath)}">
-    <p>В данной папке нет файлов/папок</p>
-</div>
-<br>
-<div>
-    <a th:if="${breadcrumbs == ''}" style="pointer-events: none; color: rgb(128,128,128);">
-        <img th:src="@{/img/free-icon-left-arrow-3434823%20(1).png}" alt="Вернуться" style="cursor: not-allowed;"/>
-    </a>
-    <a th:if="${breadcrumbs == '/'}" th:href="@{/}">
-        <img th:src="@{/img/free-icon-left-arrow-3434823%20(1).png}" alt="Вернуться"/>
-    </a>
-    <a th:if="${breadcrumbs != '' and breadcrumbs != '/'}" th:href="@{/(path=${breadcrumbs})}">
-        <img th:src="@{/img/free-icon-left-arrow-3434823%20(1).png}" alt="Вернуться"/>
-    </a>
-</div>
-<br>
-<div>
-    <form action="#" method="get" th:action="@{/search}">
-        <label> Строка поиска папок/файлов:
+<header>
+    <div class="left-section">
+        <form class="form" action="#" method="get" th:action="@{/search}">
             <input type="text" name="query" required/>
-        </label>
-        <button type="submit">поиск</button>
-    </form>
-</div>
-<div>
-    <form action="#" method="post" th:action="@{/create-folder}">
-        <label> Имя новой папки:
+            <button type="submit">поиск</button>
+        </form>
+        <form class="form" action="#" method="post" th:action="@{/create-folder}">
             <input type="text" name="folderName" placeholder="Введите имя папки" required/>
             <input type="hidden" name="prefix" th:value="${prefix}"/>
-        </label>
-        <button type="submit">Создать папку</button>
-    </form>
-</div>
-<div th:if="${allPath != null || !#lists.isEmpty(allPath)}">
-    <div th:each="path, iterStat : ${allPath}">
-        <h3 th:text="${path}"></h3>
-        <div th:if="${path.endsWith('/')}">
-            <form action=# method="get" th:action="@{/}">
-                <input type="hidden" name="path" th:value="${(prefix == '') ? path.substring(0, path.length() - 1)
-                       : prefix.substring(1, prefix.length()) + '/' + path.substring(0, path.length() - 1)}"/>
-                <button type="submit">Перейти в папку</button>
-            </form>
-            <form action="#" method="post" th:action="@{/delete-folder}">
-                <input type="hidden" name="path" th:value="${path}"/>
-                <input type="hidden" name="prefix" th:value="${prefix == '/' ? '' : prefix}"/>
-                <button type="submit">Удалить папку</button>
-            </form>
-            <form action="#" method="get" th:action="@{/download-folder}">
-                <input type="hidden" name="path" th:value="${path}"/>
-                <input type="hidden" name="prefix" th:value="${prefix}"/>
-                <button type="submit">Скачать папку</button>
-            </form>
+            <button type="submit">Создать папку</button>
+        </form>
+    </div>
+    <div class="right-section">
+        <span class="header-text" th:text="${login}"></span>
+        <a class="header-link" href="/logout">Логаут</a>
+    </div>
+</header>
 
-            <img src="" alt="Логотип" style="cursor: pointer;" th:onclick="'toggleEdit(' + ${iterStat.index} + ')'"/>
-            <div th:id="${iterStat.index}" class="hidden">
-                <form action="#" method="post" th:action="@{/rename-folder}">
-                    <input type="text" id="newFolderName" name="newFolderName" th:value="${path}" required/>
-                    <input type="hidden" name="oldFolderName" th:value="${path}"/>
-                    <input type="hidden" name="prefix" th:value="${prefix}"/>
-                    <button type="submit">Сохранить</button>
-                </form>
-            </div>
-
+<div class="content-container">
+    <div class="left-content">
+        <h3 th:text="${'Вы находитесь в директории: ' + prefix}"></h3>
+        <div th:if="${allPath == null || #lists.isEmpty(allPath)}">
+            <p>В данной папке нет файлов/папок</p>
         </div>
-        <div th:if="${!path.endsWith('/')}">
-            <form action="#" method="post" th:action="@{/delete-file}">
-                <input type="hidden" name="path" th:value="${path}"/>
-                <input type="hidden" name="prefix" th:value="${prefix}"/>
-                <button type="submit">Удалить файл</button>
-            </form>
-            <form action="#" method="get" th:action="@{/download-file}">
-                <input type="hidden" name="path" th:value="${path}"/>
-                <input type="hidden" name="prefix" th:value="${prefix}"/>
-                <button type="submit">Скачать файл</button>
-            </form>
+        <div>
+            <a th:if="${breadcrumbs == ''}" style="pointer-events: none; color: rgb(128,128,128);">
+                <img th:src="@{/img/free-icon-left-arrow-3434823%20(1).png}" alt="Вернуться"
+                     style="cursor: not-allowed;"/>
+            </a>
+            <a th:if="${breadcrumbs == '/'}" th:href="@{/}">
+                <img th:src="@{/img/free-icon-left-arrow-3434823%20(1).png}" alt="Вернуться"/>
+            </a>
+            <a th:if="${breadcrumbs != '' and breadcrumbs != '/'}" th:href="@{/(path=${breadcrumbs})}">
+                <img th:src="@{/img/free-icon-left-arrow-3434823%20(1).png}" alt="Вернуться"/>
+            </a>
+        </div>
 
-            <img src="" alt="Логотип" style="cursor: pointer;" th:onclick="'toggleEdit(' + ${iterStat.index} + ')'"/>
-            <div th:id="${iterStat.index}" class="hidden">
-                <form action="#" method="post" th:action="@{/rename-file}">
-                    <input type="text" id="newFileName" name="newFileName" th:value="${path}" required/>
-                    <input type="hidden" name="oldFileName" th:value="${path}"/>
-                    <input type="hidden" name="prefix" th:value="${prefix}"/>
-                    <button type="submit">Сохранить</button>
-                </form>
+        <div th:if="${allPath != null || !#lists.isEmpty(allPath)}">
+            <div th:each="path, iterStat : ${allPath}" class="item-container-parent">
+                <div th:if="${path.endsWith('/')}" class="item-container">
+                    <a th:text="${path}"
+                       th:href="@{/(path=${(prefix == '') ? path.substring(0, path.length() - 1) : prefix.substring(1) + '/' + path.substring(0, path.length() - 1)})}"></a>
+                    <form action="#" method="post" th:action="@{/delete-folder}">
+                        <input type="hidden" name="path" th:value="${path}"/>
+                        <input type="hidden" name="prefix" th:value="${prefix == '/' ? '' : prefix}"/>
+                        <input type="image" th:src="@{/img/deleteIcon (2).png}" alt="Delete folder" class="img-logo"/>
+                    </form>
+                    <form action="#" method="get" th:action="@{/download-folder}">
+                        <input type="hidden" name="path" th:value="${path}"/>
+                        <input type="hidden" name="prefix" th:value="${prefix}"/>
+                        <input type="image" th:src="@{/img/downloadIcon.png}" alt="Download folder" class="img-logo"/>
+                    </form>
+
+                    <img th:src="@{/img/renameIcon.png}" alt="Rename"
+                         th:onclick="'toggleEdit(' + ${iterStat.index} + ')'" class="img-logo"/>
+                    <div th:id="${iterStat.index}" class="hidden">
+                        <form action="#" method="post" th:action="@{/rename-folder}">
+                            <input type="text" id="newFolderName" name="newFolderName" th:value="${path}" required/>
+                            <input type="hidden" name="oldFolderName" th:value="${path}"/>
+                            <input type="hidden" name="prefix" th:value="${prefix}"/>
+                            <button type="submit">Сохранить</button>
+                        </form>
+                    </div>
+
+                </div>
+                <div th:if="${!path.endsWith('/')}" class="item-container">
+                    <p th:text="${path}"></p>
+                    <form action="#" method="post" th:action="@{/delete-file}">
+                        <input type="hidden" name="path" th:value="${path}"/>
+                        <input type="hidden" name="prefix" th:value="${prefix}"/>
+                        <input type="image" th:src="@{/img/deleteIcon (2).png}" alt="Delete file" class="img-logo"/>
+                    </form>
+                    <form action="#" method="get" th:action="@{/download-file}">
+                        <input type="hidden" name="path" th:value="${path}"/>
+                        <input type="hidden" name="prefix" th:value="${prefix}"/>
+                        <input type="image" th:src="@{/img/downloadIcon.png}" alt="Download folder" class="img-logo"/>
+                    </form>
+
+                    <img th:src="@{/img/renameIcon.png}" alt="Rename"
+                         th:onclick="'toggleEdit(' + ${iterStat.index} + ')'" class="img-logo"/>
+                    <div th:id="${iterStat.index}" class="hidden">
+                        <form action="#" method="post" th:action="@{/rename-file}">
+                            <input type="text" id="newFileName" name="newFileName" th:value="${path}" required/>
+                            <input type="hidden" name="oldFileName" th:value="${path}"/>
+                            <input type="hidden" name="prefix" th:value="${prefix}"/>
+                            <button type="submit">Сохранить</button>
+                        </form>
+                    </div>
+
+                </div>
             </div>
-
         </div>
     </div>
-</div>
 
-<form action="#" th:action="@{/load}" method="post" enctype="multipart/form-data">
-    <div class="drop-zone">
-        <span class="drop-zone__prompt">Drop file here or click to upload</span>
-        <input type="file" name="myFile" class="drop-zone__input">
-        <input type="hidden" name="prefix" th:value="${prefix}"/>
+    <div class="right-content">
+        <form action="#" th:action="@{/load}" method="post" enctype="multipart/form-data">
+            <div class="drop-zone">
+                <span class="drop-zone__prompt">Drop file here or click to upload</span>
+                <input type="file" name="myFile" class="drop-zone__input">
+                <input type="hidden" name="prefix" th:value="${prefix}"/>
+            </div>
+            <br>
+            <button type="submit">Загрузить</button>
+        </form>
+        <h3>Загрузка папок</h3>
+        <form action="#" th:action="@{/loadFolder}" method="post" enctype="multipart/form-data">
+            <div class="drop-zone">
+                <span class="drop-zone__prompt">Drop file here or click to upload</span>
+                <input type="file" name="myFolder" webkitdirectory multiple>
+                <input type="hidden" name="prefix" th:value="${prefix}"/>
+            </div>
+            <br>
+            <button type="submit">Загрузить</button>
+        </form>
     </div>
-    <br>
-    <button type="submit">Загрузить</button>
-</form>
-<h3>Загрузка папок</h3>
-<form action="#" th:action="@{/loadFolder}" method="post" enctype="multipart/form-data">
-    <div class="drop-zone">
-        <span class="drop-zone__prompt">Drop file here or click to upload</span>
-        <input type="file" name="myFolder" webkitdirectory multiple>
-        <input type="hidden" name="prefix" th:value="${prefix}"/>
-    </div>
-    <br>
-    <button type="submit">Загрузить</button>
-</form>
+</div>
 
 <script th:src="@{/home.js}"></script>
 </body>

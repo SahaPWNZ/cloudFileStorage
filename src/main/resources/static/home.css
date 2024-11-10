@@ -1,3 +1,103 @@
+/** {*/
+/*    box-sizing: border-box; !* Упрощает работу с размерами *!*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*}*/
+
+body {
+    background-image: url('img/99px_ru_wallpaper_221797_temnie_silueti_elej_na_fone_zvezdnogo_neba_v.jpg'); /* Путь к изображению */
+    background-size: cover; /* Изображение будет покрывать весь экран */
+    background-position: center; /* Центрируем изображение */
+    /*margin: 0;*/
+    /*padding: 0;*/
+    height: 100vh;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    display: flex;
+    width: 100%;
+    height: 15%;
+    /*justify-content: space-between; !* Распределяем пространство между элементами *!*/
+    /*background-color: #333; !* Цвет фона шапки *!*/
+    /*padding: 20px; !* Отступы внутри шапки *!*/
+}
+
+.left-section {
+    width: 50%;
+    height: 100%;
+    /*gap: 20px; !* Промежуток между формами *!*/
+}
+
+.form {
+    display: flex; /* Размещаем элементы формы в ряд */
+    flex-direction: column; /* Элементы формы располагаются вертикально */
+}
+
+input {
+    padding: 10px; /* Отступы внутри поля ввода */
+    margin-bottom: 10px; /* Отступ между полем ввода и кнопкой */
+    border: none; /* Убираем стандартные границы */
+    border-radius: 5px; /* Закругление углов */
+}
+
+button {
+    padding: 10px; /* Отступы внутри кнопки */
+    background-color: #007BFF; /* Цвет кнопки */
+    color: white; /* Цвет текста кнопки */
+    border: none; /* Убираем стандартные границы */
+    border-radius: 5px; /* Закругление углов */
+    cursor: pointer; /* Указатель при наведении */
+}
+
+button:hover {
+    background-color: #0056b3; /* Цвет кнопки при наведении */
+}
+
+.right-section {
+    height: 100%;
+    width: 45%;
+    align-items: flex-end; /* Вертикально выравниваем текст и ссылку по центру */
+    color: blue; /* Цвет текста */
+}
+
+.header-text {
+    font-size: 18px; /* Размер шрифта для текста */
+    margin-right: 20px; /* Отступ между текстом и ссылкой */
+}
+
+.header-link {
+    color: red; /* Цвет ссылки */
+    text-decoration: none; /* Убираем подчеркивание */
+}
+
+.header-link:hover {
+    text-decoration: underline; /* Подчеркивание при наведении */
+}
+
+.item-container {
+    display: flex;
+    align-items: center; /* Выравнивание по вертикали */
+    gap: 10px; /* Расстояние между элементами */
+    margin-bottom: 10px; /* Расстояние между строками */
+}
+
+.item-container h3 {
+    margin: 0; /* Убираем внешние отступы у заголовка */
+    flex-shrink: 0; /* Предотвращаем сжатие заголовка */
+}
+
+.item-container form {
+    display: inline-block; /* Делаем формы инлайновыми */
+}
+
+.item-container img {
+    margin-left: 10px; /* Отступ для изображения */
+    cursor: pointer; /* Указатель мыши при наведении */
+}
+
 .hidden {
     display: none;
 }

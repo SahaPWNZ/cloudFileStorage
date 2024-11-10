@@ -1,0 +1,66 @@
+body {
+    /*background-image: url('img/99px_ru_wallpaper_221797_temnie_silueti_elej_na_fone_zvezdnogo_neba_v.jpg'); !* Путь к изображению *!*/
+    /*background-size: cover; !* Изображение будет покрывать весь экран *!*/
+    /*background-position: center; !* Центрируем изображение *!*/
+    /*height: 100vh;*/
+    /*background-repeat: no-repeat;*/
+    /*background-attachment: fixed;*/
+    /*font-family: Arial, sans-serif;*/
+}
+
+.img-logo {
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+}
+
+header {
+    display: flex;
+    width: 100%; /* Убедитесь, что header занимает всю ширину */
+    box-sizing: border-box; /* Учитываем отступы и границы */
+}
+
+.left-section, .right-section {
+    width: 50%;
+    box-sizing: border-box;
+}
+
+.left-section {
+    display: flex;
+}
+
+.right-section {
+    display: flex;
+
+}
+
+.content-container {
+    display: flex; /* Flexbox для размещения секций в ряд */
+    width: 100%; /* Убедитесь, что контейнер занимает всю ширину */
+    box-sizing: border-box;
+}
+
+.left-content, .right-content {
+    width: 50%; /* Каждая секция занимает 50% ширины контейнера */
+    box-sizing: border-box;
+    padding: 10px; /* Добавьте отступы по необходимости */
+}
+
+.left-content {
+    display: flex;
+    flex-direction: column; /* Вертикальное расположение дочерних элементов */
+}
+
+.right-content {
+    display: flex;
+    flex-direction: column; /* Вертикальное расположение дочерних элементов */
+}
+
+.item-container {
+    display: flex;
+}
+
+.hidden {
+    display: none;
+}
