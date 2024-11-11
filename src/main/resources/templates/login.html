@@ -1,25 +1,85 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.w3.org/1999/xhtml" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Вход</title>
+    <title>Login</title>
+    <style>
+        body {
+            display: flex; /* Используем Flexbox для центрирования */
+            flex-direction: column; /* Вертикальное расположение элементов */
+            justify-content: center; /* Центрируем по вертикали */
+            align-items: center; /* Центрируем по горизонтали */
+            height: 100vh; /* Высота 100% от видимой области */
+            margin: 0; /* Убираем отступы */
+            font-family: Arial, sans-serif; /* Шрифт для текста */
+            background-color: #f9f9f9; /* Светлый фон страницы */
+        }
+
+        h1 {
+            margin-bottom: 20px; /* Отступ снизу для заголовка */
+        }
+
+        form {
+            background-color: #fff; /* Белый фон для формы */
+            padding: 20px; /* Внутренние отступы формы */
+            border-radius: 8px; /* Закругленные углы формы */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Легкая тень для формы */
+        }
+
+        div {
+            margin-bottom: 15px; /* Отступ между элементами формы */
+        }
+
+        label {
+            display: block; /* Блоковое отображение для меток */
+            margin-bottom: 5px; /* Отступ снизу для меток */
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%; /* Ширина полей ввода на всю ширину контейнера */
+            padding: 10px; /* Внутренние отступы полей ввода */
+            border: 1px solid #ccc; /* Рамка для полей ввода */
+            border-radius: 4px; /* Закругленные углы полей ввода */
+        }
+
+        button {
+            background-color: #009578; /* Цвет фона кнопки */
+            color: white; /* Цвет текста кнопки */
+            border: none; /* Без рамки кнопки */
+            padding: 10px 15px; /* Внутренние отступы кнопки */
+            border-radius: 4px; /* Закругленные углы кнопки */
+            cursor: pointer; /* Курсор при наведении на кнопку */
+        }
+
+        button:hover {
+            background-color: #007a63; /* Цвет фона кнопки при наведении */
+        }
+
+        .button {
+            margin-top: 15px; /* Отступ сверху для ссылки регистрации */
+            text-decoration: none; /* Убираем подчеркивание у ссылки */
+            color: #009578; /* Цвет текста ссылки */
+        }
+    </style>
+
 </head>
 <body>
-
-<h1>Вход в систему</h1>
-
+<h1>Authorization</h1>
 <form action="#" th:action="@{/login}" method="post">
-    <div><label for="username">Имя пользователя:</label>
+    <div><label for="username">Login:</label>
         <input type="text" id="username" name="username" required/></div>
 
-    <div><label for="password">Пароль:</label><input type="password" id="password" name="password" required/></div>
+    <div><label for="password">Password:</label><input type="password" id="password" name="password" required/></div>
 
-    <div><button type="submit">Войти</button></div>
+    <div>
+        <button type="submit">Sign-in</button>
+    </div>
 
     <div th:if="${param.error}">
         <p style="color:red;">Неверные учетные данные.</p></div>
 
 </form>
-<a href="/register" class="button">Регистрация</a>
+<a href="/register" class="button">Sign-on</a>
 </body>
 </html>

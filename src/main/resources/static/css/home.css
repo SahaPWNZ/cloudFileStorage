@@ -99,6 +99,27 @@ header {
     font-size: 20px;
 }
 
+.left-content a {
+    text-decoration: none;
+    font-weight: bold;
+    color: black;
+}
+
+.left-content a:hover {
+    text-decoration: underline;
+}
+
+.top-left-content {
+    display: flex; /* Используем Flexbox для выравнивания элементов */
+    align-items: center; /* Центрируем элементы по вертикали */
+}
+
+.back-arrow {
+    margin-right: 10px; /* Отступ справа от изображения */
+    width: 50px; /* Устанавливаем ширину изображения (по желанию) */
+    height: auto; /* Автоматическая высота для сохранения пропорций */
+}
+
 .right-content {
     display: flex;
     flex-direction: column; /* Вертикальное расположение дочерних элементов */

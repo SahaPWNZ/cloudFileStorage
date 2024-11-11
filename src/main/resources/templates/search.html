@@ -1,17 +1,19 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.w3.org/1999/xhtml" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/search.css}"/>
+    <title>Search page</title>
 </head>
 <body>
-<div>
+<div class="top-container">
     <form action="#" method="get" th:action="@{/search}">
         <label> Строка поиска папок/файлов:
             <input type="text" name="query" required/>
         </label>
         <button type="submit">поиск</button>
     </form>
+    <a class="top-button" href="/">Home</a>
 </div>
 <h2>Результаты поиска:</h2>
 <div th:if="${#lists.isEmpty(results)}">

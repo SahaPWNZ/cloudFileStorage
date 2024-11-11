@@ -1,0 +1,62 @@
+body{
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9; /* Светлый фон для контраста */
+}
+.top-container{
+    display: flex;
+    justify-content: space-between;
+}
+
+form {
+    background-color: #fff; /* Белый фон для формы */
+    padding: 15px; /* Внутренние отступы формы */
+    border-radius: 8px; /* Закругленные углы формы */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Легкая тень для формы */
+}
+
+label {
+    display: block; /* Блоковое отображение для меток */
+    margin-bottom: 10px; /* Отступ снизу для меток */
+}
+
+input[type="text"] {
+    /*width: 100%; !* Ширина поля ввода на всю ширину контейнера *!*/
+    padding: 10px; /* Внутренние отступы поля ввода */
+    border: 1px solid #ccc; /* Рамка для поля ввода */
+    border-radius: 4px; /* Закругленные углы поля ввода */
+}
+
+button {
+    background-color: #009578; /* Цвет фона кнопки */
+    color: white; /* Цвет текста кнопки */
+    border: none; /* Без рамки кнопки */
+    padding: 10px 15px; /* Внутренние отступы кнопки */
+    border-radius: 4px; /* Закругленные углы кнопки */
+    cursor: pointer; /* Курсор при наведении на кнопку */
+}
+
+button:hover {
+    background-color: #007a63; /* Цвет фона кнопки при наведении */
+}
+
+h2 {
+    margin-top: 30px; /* Отступ сверху для заголовка результатов поиска */
+}
+
+ul {
+    list-style-type: none; /* Убираем маркеры списка */
+    padding-left: 0; /* Убираем отступ слева у списка */
+}
+
+li {
+    margin-bottom: 10px; /* Отступ между элементами списка */
+}
+
+a {
+    text-decoration: none; /* Убираем подчеркивание у ссылок */
+    color: #009578; /* Цвет текста ссылок */
+}
+
+a:hover {
+    text-decoration: underline; /* Подчеркивание при наведении на ссылки */
+}
