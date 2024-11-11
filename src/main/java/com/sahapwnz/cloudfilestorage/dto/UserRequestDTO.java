@@ -2,6 +2,7 @@ package com.sahapwnz.cloudfilestorage.dto;
 
 
 import com.sahapwnz.cloudfilestorage.util.PasswordMatches;
+import com.sahapwnz.cloudfilestorage.util.ValidEmail;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
@@ -12,7 +13,7 @@ import lombok.*;
 @Builder
 @PasswordMatches
 public class UserRequestDTO {
-    //    @ValidEmail
+    @ValidEmail
     private String login;
     @NotBlank
     private String password;

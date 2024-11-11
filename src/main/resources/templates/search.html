@@ -8,17 +8,17 @@
 <body>
 <div class="top-container">
     <form action="#" method="get" th:action="@{/search}">
-        <label> Строка поиска папок/файлов:
+        <label> Search files/folders:
             <input type="text" name="query" required/>
         </label>
-        <button type="submit">поиск</button>
+        <button type="submit">search</button>
     </form>
     <a class="top-button" href="/">Home</a>
 </div>
-<h2>Результаты поиска:</h2>
+<h2>Results:</h2>
 <div th:if="${#lists.isEmpty(results)}">
-    <p>Ничего не найдено.</p>
-    <a href="/" th:text="'Перейти в домашнюю директорию'">Перейти в домашнюю директорию</a>
+    <p>Nothing found</p>
+    <a href="/" th:text="'To home directory'"></a>
 </div>
 <div th:if="${!#lists.isEmpty(results)}">
     <ul>
