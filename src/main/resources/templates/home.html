@@ -37,7 +37,7 @@
         </div>
 
         <div th:if="${allPath == null || #lists.isEmpty(allPath)}">
-            <p>В данной папке нет файлов/папок</p>
+            <p>This folder is empty</p>
         </div>
 
 
@@ -130,7 +130,13 @@
         </div>
     </div>
 </div>
-
+<div class="error-overlay" th:if="${error!=null}">
+    <div class="error-message">
+        <h3>Exception</h3>
+        <p th:text="${error}"></p>
+        <button class="button-error" onclick="closeError()">Ok</button>
+    </div>
+</div>
 <script th:src="@{/home.js}"></script>
 </body>
 </html>

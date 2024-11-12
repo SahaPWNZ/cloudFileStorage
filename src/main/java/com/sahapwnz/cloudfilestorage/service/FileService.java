@@ -31,6 +31,21 @@ public class FileService {
         }
     }
 
+    public boolean isObjectExist(String folderPath) {
+        try {
+            return minioClient.statObject(StatObjectArgs.builder()
+                    .bucket("user-files")
+                    .object(folderPath)
+                    .build()) !=null;
+        } catch (MinioException e) {
+            return false;
+        } catch (Exception e) {
+            throw new ApplicationException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR) {
+            };
+        }
+    }
+
+
     public ArrayList<String> getInfoForThisFolder(String prefix) {
         ArrayList<String> allPathForThisPrefix = new ArrayList<>();
         try {
@@ -42,9 +57,11 @@ public class FileService {
 
             for (Result<Item> res : minioClient.listObjects(lArgs)) {
                 String relativePath = res.get().objectName();
+//                System.out.println("INFO-" + relativePath);
                 if (relativePath.substring(prefix.length()).startsWith("/")) {
                     String path = relativePath.substring(prefix.length() + 1);
                     if (!path.isEmpty() && path.split("/").length == 1) {
+//                        System.out.println("INFO::" + path);
                         allPathForThisPrefix.add(path);
                     }
                 }
@@ -54,15 +71,6 @@ public class FileService {
             };
         }
         return allPathForThisPrefix;
-    }
-
-    private boolean isValidPath(String objectName, String prefix) {
-        String relativePath = objectName.substring(prefix.length());
-        return relativePath.startsWith("/") && relativePath.split("/").length == 1;
-    }
-
-    private String extractPath(String objectName, String prefix) {
-        return objectName.substring(prefix.length() + 1);
     }
 
     public void deleteObject(String fullPath) {
@@ -100,7 +108,7 @@ public class FileService {
                             .stream(InputStream.nullInputStream(), 0, -1)
                             .build());
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("Ошибка!!!!" + e.getMessage());
         }
     }
 
@@ -299,17 +307,6 @@ public class FileService {
         String[] subParts = Arrays.copyOfRange(parts, 1, parts.length - 1); // Копируем подмассив начиная со второго элемента
         return String.join("/", subParts); // Объединяем с "/" и добавляем перед ним "/"
     }
-}
 
-//for (Result<Item> res : minioClient.listObjects(lArgs)) {
-//        Item item = res.get();
-//        String relativePath = item.objectName().substring(prefix.length());
-//
-//        if (!relativePath.isEmpty() && relativePath.startsWith("/")) {
-//        String path = relativePath.substring(1);
-//        if (path.split("/").length == 1) {
-//        System.out.println("---" + path + "---");
-//        allPathForThisPrefix.add(path);
-//        }
-//        }
-//        }
+
+}

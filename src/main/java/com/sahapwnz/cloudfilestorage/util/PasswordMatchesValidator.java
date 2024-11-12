@@ -1,10 +1,9 @@
 package com.sahapwnz.cloudfilestorage.util;
 
 import com.sahapwnz.cloudfilestorage.dto.UserRequestDTO;
-import com.sahapwnz.cloudfilestorage.exception.ValidationException;
+import com.sahapwnz.cloudfilestorage.exception.RegistrationException;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.springframework.http.HttpStatus;
 
 public class PasswordMatchesValidator
         implements ConstraintValidator<PasswordMatches, Object> {
@@ -17,7 +16,7 @@ public class PasswordMatchesValidator
     public boolean isValid(Object obj, ConstraintValidatorContext context) {
         UserRequestDTO user = (UserRequestDTO) obj;
         if (!user.getPassword().equals(user.getConfirmPassword())) {
-            throw new ValidationException("Введенные пароли не совпадают", HttpStatus.BAD_REQUEST);
+            throw new RegistrationException("Введенные пароли не совпадают");
         }
         return true;
     }

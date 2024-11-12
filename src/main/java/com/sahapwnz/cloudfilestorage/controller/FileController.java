@@ -2,6 +2,7 @@ package com.sahapwnz.cloudfilestorage.controller;
 
 import com.sahapwnz.cloudfilestorage.service.FileService;
 import com.sahapwnz.cloudfilestorage.service.UserDetailsImpl;
+import com.sahapwnz.cloudfilestorage.util.ValidationUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -86,10 +87,10 @@ public class FileController {
                         @RequestParam("prefix") String prefix,
                         @AuthenticationPrincipal UserDetailsImpl userDetails,
                         HttpServletRequest request) {
-        System.out.println("prefix: " + prefix);
         String rootPath = "user-" + userDetails.getUser().getId() + "-files";
-        fileService.createFolder(folderName, rootPath + prefix);
+        ValidationUtil.isValidNewFolderName(folderName, rootPath + prefix, fileService);
 
+        fileService.createFolder(folderName, rootPath + prefix);
         return "redirect:" + request.getHeader("Referer");
     }
 

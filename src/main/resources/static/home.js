@@ -70,3 +70,7 @@ function toggleEdit(sectionId) {
     }
 }
 
+function closeError() {
+    document.querySelector('.error-overlay').style.display = 'none';
+}
+

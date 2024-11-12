@@ -1,11 +1,15 @@
-package com.sahapwnz.cloudfilestorage.exception;
+package com.sahapwnz.cloudfilestorage.exceptionsHandlers;
 
+import com.sahapwnz.cloudfilestorage.dto.UserRequestDTO;
+import com.sahapwnz.cloudfilestorage.exception.NewFolderException;
+import com.sahapwnz.cloudfilestorage.exception.RegistrationException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,18 +26,26 @@ public class GlobalExceptionHandler {
 
         model.addAttribute("redirectUrl", request.getRequestURI());
         model.addAttribute("errorMessage", "Ошибка валидации: " + errors);
-        return "error"; // Возвращаем имя шаблона для страницы ошибки
+        return "error";
     }
 
-    @ExceptionHandler(ValidationException.class)
-    public String handleValidationExceptions2(ValidationException ex, Model model, HttpServletRequest request) {
+    @ExceptionHandler(RegistrationException.class)
+    public String handleRegistrationExceptions(RegistrationException ex, Model model) {
 
-        model.addAttribute("redirectUrl", request.getRequestURI());
-        model.addAttribute("errorMessage", "Ошибка валидации: " +
-                ex.getMessage() + "код ошибки: " + ex.getStatusCode());
-        return "error"; // Возвращаем имя шаблона для страницы ошибки
+        model.addAttribute("userRequestDTO", new UserRequestDTO());
+        model.addAttribute("error", ex.getMessage());
+        log.info(ex.getMessage());
+        return "/register";
     }
 
+    @ExceptionHandler(NewFolderException.class)
+    public String handleHomePageExceptions(NewFolderException ex,
+                                           RedirectAttributes redirectAttributes,
+                                           HttpServletRequest request) {
+        redirectAttributes.addFlashAttribute("error", ex.getMessage());
+        log.info(ex.getMessage());
+        return "redirect:" + request.getHeader("Referer");
+    }
     //     Обработка других исключений (по желанию)
 //    @ExceptionHandler(RuntimeException.class)
 //    public String handleGenericException(Exception ex, Model model, HttpServletRequest request) {

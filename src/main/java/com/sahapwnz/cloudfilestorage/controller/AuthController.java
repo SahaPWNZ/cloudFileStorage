@@ -2,6 +2,7 @@ package com.sahapwnz.cloudfilestorage.controller;
 
 import com.sahapwnz.cloudfilestorage.dto.UserRequestDTO;
 import com.sahapwnz.cloudfilestorage.entity.User;
+import com.sahapwnz.cloudfilestorage.exception.RegistrationException;
 import com.sahapwnz.cloudfilestorage.service.BreadcrumbsService;
 import com.sahapwnz.cloudfilestorage.service.FileService;
 import com.sahapwnz.cloudfilestorage.service.UserDetailsImpl;
@@ -47,6 +48,7 @@ public class AuthController {
 
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
+
         model.addAttribute("userRequestDTO", new UserRequestDTO());
         return "register"; // Возвращает имя шаблона для страницы регистрации (register.html)
     }
@@ -59,14 +61,14 @@ public class AuthController {
 
         if (userService.saveUser(user)) {
             fileService.createRootFolder(user.getId());
-            return "redirect:/login"; // Перенаправление на страницу входа после успешной регистрации
+            return "redirect:/login";
         } else {
-            return "redirect:/register?error"; // Перенаправление обратно на страницу регистрации с ошибкой
+            throw new RegistrationException("This login: " + user.getLogin() + " is already in use, use another one");
         }
     }
 
     @GetMapping("/login")
     public String showLoginForm() {
-        return "login"; // Возвращает имя шаблона для страницы входа (login.html)
+        return "login";
     }
 }

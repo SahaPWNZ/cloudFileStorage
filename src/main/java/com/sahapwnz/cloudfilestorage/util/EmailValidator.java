@@ -1,10 +1,8 @@
 package com.sahapwnz.cloudfilestorage.util;
 
-import com.sahapwnz.cloudfilestorage.exception.ValidationException;
+import com.sahapwnz.cloudfilestorage.exception.RegistrationException;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,7 +22,7 @@ public class EmailValidator implements ConstraintValidator<ValidEmail, String> {
     @Override
     public boolean isValid(String email, ConstraintValidatorContext context) {
         if (!validateEmail(email)) {
-            throw new ValidationException("Invalid email format: " + email, HttpStatus.BAD_REQUEST);
+            throw new RegistrationException("Invalid email format: " + email);
         }
         return true;
     }

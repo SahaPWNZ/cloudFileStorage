@@ -212,3 +212,42 @@ header {
 .drop-zone-button:hover {
     background-color: #007a63; /* Цвет фона кнопки при наведении */
 }
+
+.error-overlay {
+    position: fixed; /* Фиксированное положение */
+    top: 0;
+    left: 0;
+    width: 100%; /* Полная ширина */
+    height: 100%; /* Полная высота */
+    background-color: rgba(0, 0, 0, 0.7); /* Полупрозрачный черный фон */
+    display: flex; /* Используем Flexbox для центрирования содержимого */
+    justify-content: center; /* Центрируем по горизонтали */
+    align-items: center; /* Центрируем по вертикали */
+    z-index: 1000; /* Устанавливаем высокий z-index, чтобы окно было поверх остальных элементов */
+}
+
+.error-message {
+    max-width: 400px;
+    background-color: #fff; /* Белый фон для сообщения об ошибке */
+    padding: 20px; /* Внутренние отступы */
+    border-radius: 8px; /* Закругленные углы */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Легкая тень */
+    text-align: center; /* Центрируем текст внутри сообщения */
+}
+
+.error-message h3 {
+    margin-top: 0; /* Убираем верхний отступ у заголовка */
+}
+
+.button-error {
+    background-color: #009578; /* Цвет фона кнопки */
+    color: white; /* Цвет текста кнопки */
+    border: none; /* Без рамки кнопки */
+    padding: 10px 15px; /* Внутренние отступы кнопки */
+    border-radius: 4px; /* Закругленные углы кнопки */
+    cursor: pointer; /* Курсор при наведении на кнопку */
+}
+
+.button-error:hover {
+    background-color: #007a63; /* Цвет фона кнопки при наведении */
+}
