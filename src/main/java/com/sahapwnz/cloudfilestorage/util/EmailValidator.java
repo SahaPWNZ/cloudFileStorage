@@ -1,6 +1,5 @@
 package com.sahapwnz.cloudfilestorage.util;
 
-import com.sahapwnz.cloudfilestorage.exception.RegistrationException;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
@@ -21,10 +20,7 @@ public class EmailValidator implements ConstraintValidator<ValidEmail, String> {
 
     @Override
     public boolean isValid(String email, ConstraintValidatorContext context) {
-        if (!validateEmail(email)) {
-            throw new RegistrationException("Invalid email format: " + email);
-        }
-        return true;
+        return validateEmail(email);
     }
 
     private boolean validateEmail(String email) {
@@ -33,3 +29,10 @@ public class EmailValidator implements ConstraintValidator<ValidEmail, String> {
         return matcher.matches();
     }
 }
+
+//{
+//        if (email == null || !validateEmail(email)) {
+//        throw new EmailValidationException("Invalid email format: " + email);
+//        }
+//        return true;
+//        }
