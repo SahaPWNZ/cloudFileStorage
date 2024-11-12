@@ -101,8 +101,9 @@ public class FileController {
                       @AuthenticationPrincipal UserDetailsImpl userDetails,
                       HttpServletRequest request) {
         String rootPath = "user-" + userDetails.getUser().getId() + "-files";
-        fileService.renameFile(oldFileName, newFileName, rootPath + prefix);
+        ValidationUtil.isValidRenameFileName(newFileName, rootPath + prefix, fileService);
 
+        fileService.renameFile(oldFileName, newFileName, rootPath + prefix);
         return "redirect:" + request.getHeader("Referer");
     }
 
@@ -113,8 +114,9 @@ public class FileController {
                         @AuthenticationPrincipal UserDetailsImpl userDetails,
                         HttpServletRequest request) {
         String rootPath = "user-" + userDetails.getUser().getId() + "-files";
-        fileService.renameFolder(oldFolderName, newFolderName, rootPath + prefix + "/");
+        ValidationUtil.isValidRenameFolderName(newFolderName, rootPath + prefix, fileService);
 
+        fileService.renameFolder(oldFolderName, newFolderName, rootPath + prefix + "/");
         return "redirect:" + request.getHeader("Referer");
     }
 

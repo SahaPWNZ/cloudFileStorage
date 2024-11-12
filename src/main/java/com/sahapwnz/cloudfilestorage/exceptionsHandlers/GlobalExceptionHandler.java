@@ -1,7 +1,8 @@
 package com.sahapwnz.cloudfilestorage.exceptionsHandlers;
 
 import com.sahapwnz.cloudfilestorage.dto.UserRequestDTO;
-import com.sahapwnz.cloudfilestorage.exception.NewFolderException;
+import com.sahapwnz.cloudfilestorage.exception.ExistException;
+import com.sahapwnz.cloudfilestorage.exception.InvalidNameException;
 import com.sahapwnz.cloudfilestorage.exception.RegistrationException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -38,14 +39,23 @@ public class GlobalExceptionHandler {
         return "/register";
     }
 
-    @ExceptionHandler(NewFolderException.class)
-    public String handleHomePageExceptions(NewFolderException ex,
+    @ExceptionHandler({InvalidNameException.class,ExistException.class})
+    public String handleHomePageExceptions(RuntimeException ex,
                                            RedirectAttributes redirectAttributes,
                                            HttpServletRequest request) {
         redirectAttributes.addFlashAttribute("error", ex.getMessage());
         log.info(ex.getMessage());
         return "redirect:" + request.getHeader("Referer");
     }
+
+//    @ExceptionHandler(ExistException.class)
+//    public String handleRenameExceptions(ExistException ex,
+//                                         RedirectAttributes redirectAttributes,
+//                                         HttpServletRequest request) {
+//        redirectAttributes.addFlashAttribute("error", ex.getMessage());
+//        log.info(ex.getMessage());
+//        return "redirect:" + request.getHeader("Referer");
+//    }
     //     Обработка других исключений (по желанию)
 //    @ExceptionHandler(RuntimeException.class)
 //    public String handleGenericException(Exception ex, Model model, HttpServletRequest request) {
