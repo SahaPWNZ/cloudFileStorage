@@ -1,5 +1,9 @@
 document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
     const dropZoneElement = inputElement.closest(".drop-zone");
+    const submitButton = dropZoneElement.closest('form').querySelector('.drop-zone-button'); // Получаем кнопку загрузки
+
+    // Деактивируем кнопку по умолчанию
+    submitButton.disabled = true;
 
     dropZoneElement.addEventListener("click", (e) => {
         inputElement.click();
@@ -8,6 +12,7 @@ document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
     inputElement.addEventListener("change", (e) => {
         if (inputElement.files.length) {
             updateThumbnail(dropZoneElement, inputElement.files[0]);
+            submitButton.disabled = false; // Активируем кнопку при загрузке файла
         }
     });
 
@@ -28,6 +33,7 @@ document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
         if (e.dataTransfer.files.length) {
             inputElement.files = e.dataTransfer.files;
             updateThumbnail(dropZoneElement, e.dataTransfer.files[0]);
+            submitButton.disabled = false; // Активируем кнопку при загрузке файла
         }
 
         dropZoneElement.classList.remove("drop-zone--over");

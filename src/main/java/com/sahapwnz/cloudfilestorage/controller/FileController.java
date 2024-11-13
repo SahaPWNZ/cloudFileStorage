@@ -40,6 +40,8 @@ public class FileController {
                     HttpServletRequest request) {
         System.out.println("prefix: " + prefix);
         String rootPath = "user-" + userDetails.getUser().getId() + "-files";
+
+        ValidationUtil.isValidLoadFileName(rootPath + prefix, file.getOriginalFilename(), fileService);
         fileService.putObject(rootPath + prefix, file);
 
         return "redirect:" + request.getHeader("Referer");
@@ -52,7 +54,9 @@ public class FileController {
                       HttpServletRequest request) {
         String rootPath = "user-" + userDetails.getUser().getId() + "-files";
         Arrays.stream(files).forEach(file -> System.out.println("folder:: " + file.getOriginalFilename()));
+        ValidationUtil.isValidLoadFolderName(rootPath + prefix, files, fileService);
         fileService.putFolder(files, rootPath + prefix);
+
 
         return "redirect:" + request.getHeader("Referer");
     }
