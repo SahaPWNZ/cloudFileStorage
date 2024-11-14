@@ -1,16 +1,9 @@
 package com.sahapwnz.cloudfilestorage.exception;
 
-import lombok.Getter;
-import org.springframework.http.HttpStatus;
+public class ApplicationException extends RuntimeException {
 
-@Getter
-public abstract class ApplicationException extends RuntimeException {
 
-    private final HttpStatus statusCode;
-
-    public ApplicationException(String message, HttpStatus statusCode) {
+    public ApplicationException(String message) {
         super(message);
-        this.statusCode = statusCode;
     }
-
 }

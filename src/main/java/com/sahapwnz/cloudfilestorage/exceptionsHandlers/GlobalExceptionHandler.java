@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
             errors.put(error.getField(), error.getDefaultMessage());
         });
         model.addAttribute("userRequestDTO", new UserRequestDTO());
-        model.addAttribute("error", errors);
+        model.addAttribute("error", errors.toString());
         log.info(ex.getMessage());
         return "/register";
     }

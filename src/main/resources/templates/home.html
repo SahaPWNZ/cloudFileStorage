@@ -109,7 +109,7 @@
 
     <div class="right-content">
         <div class="load-form-container">
-            <form action="#" th:action="@{/load}" method="post" enctype="multipart/form-data">
+            <form action="#" th:action="@{/loadFile}" method="post" enctype="multipart/form-data">
                 <div class="drop-zone">
                     <span class="drop-zone__prompt">Drop file here or click to upload</span>
                     <input type="file" name="myFile" class="drop-zone__input">
@@ -137,6 +137,6 @@
         <button class="button-error" onclick="closeError()">Ok</button>
     </div>
 </div>
-<script th:src="@{/home.js}"></script>
+<script th:src="@{/js/home.js}"></script>
 </body>
 </html>

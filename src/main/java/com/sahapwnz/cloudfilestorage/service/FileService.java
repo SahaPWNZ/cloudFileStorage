@@ -3,72 +3,84 @@ package com.sahapwnz.cloudfilestorage.service;
 import com.sahapwnz.cloudfilestorage.dto.FileResponseDTO;
 import com.sahapwnz.cloudfilestorage.exception.ApplicationException;
 import io.minio.*;
-import io.minio.errors.*;
+import io.minio.errors.ErrorResponseException;
 import io.minio.messages.Item;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+@Slf4j
 @Service
 public class FileService {
+    private static final String BUCKET_NAME = "user-files";
     MinioClient minioClient;
 
     @Autowired
-    public FileService(MinioClient minioClient) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+    public FileService(MinioClient minioClient) {
         this.minioClient = minioClient;
-        if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket("user-files").build())) {
-            minioClient.makeBucket(MakeBucketArgs.builder().bucket("user-files").build());
+        createBucketIfNotExists();
+    }
+
+    private void createBucketIfNotExists() throws ApplicationException {
+        try {
+            if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(BUCKET_NAME).build())) {
+                minioClient.makeBucket(MakeBucketArgs.builder().bucket(BUCKET_NAME).build());
+                log.info("Bucket '{}' created successfully.", BUCKET_NAME);
+            } else {
+                log.info("Bucket '{}' already exists.", BUCKET_NAME);
+            }
+        } catch (Exception e) {
+            log.error("Error while checking or creating bucket '{}': {}", BUCKET_NAME, e.getMessage());
+            throw new ApplicationException("Problem with Minio folder");
         }
     }
 
     public boolean isObjectExist(String folderPath) {
         try {
             return minioClient.statObject(StatObjectArgs.builder()
-                    .bucket("user-files")
+                    .bucket(BUCKET_NAME)
                     .object(folderPath)
-                    .build()) !=null;
-        } catch (MinioException e) {
+                    .build()) != null;
+        } catch (ErrorResponseException e) {
+            log.info("Object not found: {}", folderPath);
             return false;
         } catch (Exception e) {
-            throw new ApplicationException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR) {
+            log.error("Unexpected error while checking object existence for {}: {}", folderPath, e.getMessage());
+            throw new ApplicationException("Problem with Minio folder") {
             };
         }
     }
 
 
-    public ArrayList<String> getInfoForThisFolder(String prefix) {
-        ArrayList<String> allPathForThisPrefix = new ArrayList<>();
+    public List<String> getAllPathInThisFolder(String prefix) {
+        List<String> allPathForThisPrefix = new ArrayList<>();
         try {
             ListObjectsArgs lArgs = ListObjectsArgs.builder()
-                    .bucket("user-files")
+                    .bucket(BUCKET_NAME)
                     .prefix(prefix)
                     .recursive(true)
                     .build();
 
             for (Result<Item> res : minioClient.listObjects(lArgs)) {
                 String relativePath = res.get().objectName();
-//                System.out.println("INFO-" + relativePath);
+                log.info("path: " + relativePath);
                 if (relativePath.substring(prefix.length()).startsWith("/")) {
                     String path = relativePath.substring(prefix.length() + 1);
                     if (!path.isEmpty() && path.split("/").length == 1) {
-//                        System.out.println("INFO::" + path);
                         allPathForThisPrefix.add(path);
                     }
                 }
             }
         } catch (Exception e) {
-            throw new ApplicationException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR) {
-            };
+            log.error(e.getMessage());
+            throw new ApplicationException("Problem with Minio folder");
         }
         return allPathForThisPrefix;
     }
@@ -76,66 +88,74 @@ public class FileService {
     public void deleteObject(String fullPath) {
         try {
             minioClient.removeObject(RemoveObjectArgs.builder()
-                    .bucket("user-files")
+                    .bucket(BUCKET_NAME)
                     .object(fullPath)
                     .build());
-            System.out.println("Deleted object: " + fullPath);
+            log.info("Deleted object: " + fullPath);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            log.error(e.getMessage());
+            throw new ApplicationException("Problem with Minio folder");
         }
     }
 
     public void putObject(String prefix, MultipartFile file) {
         try {
             minioClient.putObject(PutObjectArgs.builder()
-                    .bucket("user-files")
+                    .bucket(BUCKET_NAME)
                     .object(prefix + "/" + file.getOriginalFilename())
                     .stream(file.getInputStream(), file.getSize(), -1)
                     .contentType(file.getContentType())
                     .build());
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
+            throw new ApplicationException("Problem with Minio folder");
         }
-
     }
 
     public void createFolder(String folderName, String prefix) {
         try {
             minioClient.putObject(
                     PutObjectArgs.builder()
-                            .bucket("user-files")
+                            .bucket(BUCKET_NAME)
                             .object(prefix + "/" + folderName + "/")
                             .stream(InputStream.nullInputStream(), 0, -1)
                             .build());
         } catch (Exception e) {
-            System.out.println("Ошибка!!!!" + e.getMessage());
+            log.error(e.getMessage());
+            throw new ApplicationException("Problem with Minio folder");
         }
     }
 
     public void renameFile(String oldFileName, String newFileName, String prefix) {
         try {
+            String oldFilePath = prefix + "/" + oldFileName;
+            String newFilePath = prefix + "/" + newFileName;
+
             CopySource source = CopySource.builder()
-                    .bucket("user-files")
-                    .object(prefix + "/" + oldFileName)
+                    .bucket(BUCKET_NAME)
+                    .object(oldFilePath)
                     .build();
+
             minioClient.copyObject(
                     CopyObjectArgs.builder()
-                            .bucket("user-files")
-                            .object(prefix + "/" + newFileName) // Новое имя файла
-                            .source(source) // Путь к исходному файлу
+                            .bucket(BUCKET_NAME)
+                            .object(newFilePath)
+                            .source(source)
                             .build()
             );
-            deleteObject(prefix + "/" + oldFileName);
+
+            deleteObject(oldFilePath);
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
+            throw new ApplicationException("Problem with Minio folder");
         }
     }
 
     public void renameFolder(String oldFolderName, String newFolderName, String prefix) {
         try {
             ListObjectsArgs lArgs = ListObjectsArgs.builder()
-                    .bucket("user-files")
+                    .bucket(BUCKET_NAME)
                     .prefix(prefix + oldFolderName)
                     .recursive(true)
                     .build();
@@ -144,107 +164,102 @@ public class FileService {
                 String oldPathToFile = pathToFile.get().objectName();
                 String newPathToFile = oldPathToFile.replace(oldFolderName, newFolderName);
 
-                CopySource source = CopySource.builder()
-                        .bucket("user-files")
-                        .object(oldPathToFile)
-                        .build();
-
-                minioClient.copyObject(
-                        CopyObjectArgs.builder()
-                                .bucket("user-files")
-                                .object(newPathToFile) // Новое имя файла
-                                .source(source) // Путь к исходному файлу
-                                .build());
-
+                copyObject(oldPathToFile, newPathToFile);
                 deleteObject(oldPathToFile);
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
+            throw new ApplicationException("Problem with Minio folder");
         }
+    }
+
+    private void copyObject(String oldPathToFile, String newPathToFile) throws Exception {
+        CopySource source = CopySource.builder()
+                .bucket(BUCKET_NAME)
+                .object(oldPathToFile)
+                .build();
+
+        minioClient.copyObject(
+                CopyObjectArgs.builder()
+                        .bucket(BUCKET_NAME)
+                        .object(newPathToFile)
+                        .source(source)
+                        .build());
     }
 
     public void deleteFolder(String fullPathToFolder) {
         try {
             ListObjectsArgs lArgs = ListObjectsArgs.builder()
-                    .bucket("user-files")
+                    .bucket(BUCKET_NAME)
                     .prefix(fullPathToFolder)
                     .recursive(true)
                     .build();
-
             Iterable<Result<Item>> results = minioClient.listObjects(lArgs);
+
             for (Result<Item> result : results) {
-                minioClient.removeObject(
-                        RemoveObjectArgs.builder()
-                                .bucket("user-files")
-                                .object(result.get().objectName())
-                                .build()
-                );
-                System.out.println("Удален объект: " + result.get().objectName());
+                deleteObject(result.get().objectName());
             }
+            log.info("Delete folder: " + fullPathToFolder);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
+            throw new ApplicationException("Problem with Minio folder");
         }
     }
 
     public void putFolder(MultipartFile[] files, String prefix) {
-        Set<String> setUniquePaths = new HashSet<>();
+        Set<String> uniquePaths = getUniquePaths(files);
+        uniquePaths.forEach(path -> createFolder(path, prefix));
+
+        Arrays.stream(files).forEach(file -> {
+            putObject(prefix, file);
+        });
+    }
+
+    private Set<String> getUniquePaths(MultipartFile[] files) {
+        Set<String> uniquePaths = new HashSet<>();
         Arrays.stream(files).forEach(file -> {
             int lastSlashIndex = Objects.requireNonNull(file.getOriginalFilename()).lastIndexOf('/');
             if (lastSlashIndex != -1) {
-                setUniquePaths.add(file.getOriginalFilename().substring(0, lastSlashIndex)); // Включаем слэш +1,у нас без ласт слэша
+                uniquePaths.add(file.getOriginalFilename().substring(0, lastSlashIndex)); // Включаем слэш +1,у нас без ласт слэша
             }
         });
-
-        setUniquePaths.forEach(path -> createFolder(path, prefix));
-
-        Arrays.stream(files).forEach(file -> {
-            try {
-                minioClient.putObject(PutObjectArgs.builder()
-                        .bucket("user-files")
-                        .object(prefix + "/" + file.getOriginalFilename())
-                        .stream(file.getInputStream(), file.getSize(), -1)
-                        .contentType(file.getContentType())
-                        .build());
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        });
+        return uniquePaths;
     }
 
     public void createRootFolder(Long id) {
         try {
             minioClient.putObject(
                     PutObjectArgs.builder()
-                            .bucket("user-files")
+                            .bucket(BUCKET_NAME)
                             .object("user-" + id + "-files/")
                             .stream(InputStream.nullInputStream(), 0, -1)
                             .build());
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
+            throw new ApplicationException("Problem with Minio folder");
         }
     }
 
 
     public InputStream downloadFile(String objectPath) {
-        InputStream stream = null;
         try {
-            stream = minioClient.getObject(
+            return minioClient.getObject(
                     GetObjectArgs.builder()
-                            .bucket("user-files")
+                            .bucket(BUCKET_NAME)
                             .object(objectPath)
                             .build()
             );
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
+            throw new ApplicationException("Problem with Minio folder");
         }
-        return stream;
     }
 
     public void downloadFolder(String folderPath, ZipOutputStream zipOut) {
         try {
             Iterable<Result<Item>> results = minioClient.listObjects(
                     ListObjectsArgs.builder()
-                            .bucket("user-files")
+                            .bucket(BUCKET_NAME)
                             .prefix(folderPath)
                             .recursive(true)
                             .build()
@@ -254,7 +269,7 @@ public class FileService {
                 Item item = result.get();
                 InputStream inputStream = minioClient.getObject(
                         GetObjectArgs.builder()
-                                .bucket("user-files")
+                                .bucket(BUCKET_NAME)
                                 .object(item.objectName())
                                 .build()
                 );
@@ -265,29 +280,30 @@ public class FileService {
                 zipOut.closeEntry();
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
+            throw new ApplicationException("Problem with Minio folder");
         }
-
     }
 
-    public ArrayList<FileResponseDTO> search(String query, String rootPath) {
-        ArrayList<FileResponseDTO> list = new ArrayList<>();
+    public List<FileResponseDTO> search(String query, String rootPath) {
+        List<FileResponseDTO> listFiles = new ArrayList<>();
         try {
-
-
             Iterable<Result<Item>> results = minioClient.listObjects(
                     ListObjectsArgs.builder()
-                            .bucket("user-files")
+                            .bucket(BUCKET_NAME)
                             .prefix(rootPath)
                             .recursive(true)
                             .build());
+
             for (Result<Item> result : results) {
-                if (result.get().objectName().contains(query)) {
-                    String str = result.get().objectName();
-                    String[] parts = str.split("/");
-                    System.out.println(Arrays.toString(parts));
+                String objectName = result.get().objectName();
+
+                if (objectName.contains(query)) {
+                    String[] parts = objectName.split("/");
+                    log.info("search parts: " + Arrays.toString(parts));
+
                     if (parts[parts.length - 1].contains(query)) {
-                        list.add(FileResponseDTO.builder()
+                        listFiles.add(FileResponseDTO.builder()
                                 .name(parts[parts.length - 1])
                                 .prefix(buildPath(parts))
                                 .build());
@@ -295,18 +311,17 @@ public class FileService {
                 }
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
+            throw new ApplicationException("Problem with Minio folder");
         }
-        return list;
+        return listFiles;
     }
 
     private String buildPath(String[] parts) {
         if (parts.length <= 2) {
-            return ""; // Если массив содержит только один элемент, возвращаем пустую строку
+            return "";
         }
-        String[] subParts = Arrays.copyOfRange(parts, 1, parts.length - 1); // Копируем подмассив начиная со второго элемента
-        return String.join("/", subParts); // Объединяем с "/" и добавляем перед ним "/"
+        String[] subParts = Arrays.copyOfRange(parts, 1, parts.length - 1);
+        return String.join("/", subParts);
     }
-
-
 }

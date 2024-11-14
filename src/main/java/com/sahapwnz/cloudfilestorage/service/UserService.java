@@ -1,7 +1,10 @@
 package com.sahapwnz.cloudfilestorage.service;
 
+import com.sahapwnz.cloudfilestorage.dto.UserRequestDTO;
 import com.sahapwnz.cloudfilestorage.entity.User;
+import com.sahapwnz.cloudfilestorage.exception.RegistrationException;
 import com.sahapwnz.cloudfilestorage.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
@@ -20,15 +24,14 @@ public class UserService implements UserDetailsService {
         this.bCryptPasswordEncoder = passwordEncoder;
     }
 
-    public boolean saveUser(User user) {
+    public void saveUser(User user) {
         if (userRepository.findByLogin(user.getLogin()).isPresent()) {
-            return false;
+            throw new RegistrationException("This login: " + user.getLogin() + " is already in use, use another one");
         }
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
-        return true;
+        log.info("user: " + user.getLogin() + "was save");
     }
-
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -37,5 +40,12 @@ public class UserService implements UserDetailsService {
         ));
 
         return new UserDetailsImpl(user);
+    }
+
+    public User convertToUser(UserRequestDTO userRequestDTO) {
+        User user = new User();
+        user.setLogin(userRequestDTO.getLogin());
+        user.setPassword(userRequestDTO.getPassword());
+        return user;
     }
 }

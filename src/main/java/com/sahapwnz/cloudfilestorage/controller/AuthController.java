@@ -2,7 +2,6 @@ package com.sahapwnz.cloudfilestorage.controller;
 
 import com.sahapwnz.cloudfilestorage.dto.UserRequestDTO;
 import com.sahapwnz.cloudfilestorage.entity.User;
-import com.sahapwnz.cloudfilestorage.exception.RegistrationException;
 import com.sahapwnz.cloudfilestorage.service.BreadcrumbsService;
 import com.sahapwnz.cloudfilestorage.service.FileService;
 import com.sahapwnz.cloudfilestorage.service.UserDetailsImpl;
@@ -38,10 +37,10 @@ public class AuthController {
         model.addAttribute("breadcrumbs", breadcrumbsService.getBreadcrumbsForPath(path));
         if (path != null) {
             model.addAttribute("prefix", "/" + path);
-            model.addAttribute("allPath", fileService.getInfoForThisFolder(rootPath + "/" + path));
+            model.addAttribute("allPath", fileService.getAllPathInThisFolder(rootPath + "/" + path));
         } else {
             model.addAttribute("prefix", "");
-            model.addAttribute("allPath", fileService.getInfoForThisFolder(rootPath));
+            model.addAttribute("allPath", fileService.getAllPathInThisFolder(rootPath));
         }
         return "home";
     }
@@ -55,16 +54,11 @@ public class AuthController {
 
     @PostMapping("/register")
     public String registerUser(@Valid @ModelAttribute UserRequestDTO userRequestDTO) {
-        User user = new User();
-        user.setLogin(userRequestDTO.getLogin());
-        user.setPassword(userRequestDTO.getPassword());
+        User user = userService.convertToUser(userRequestDTO);
 
-        if (userService.saveUser(user)) {
-            fileService.createRootFolder(user.getId());
-            return "redirect:/login";
-        } else {
-            throw new RegistrationException("This login: " + user.getLogin() + " is already in use, use another one");
-        }
+        userService.saveUser(user);
+        fileService.createRootFolder(user.getId());
+        return "redirect:/login";
     }
 
     @GetMapping("/login")
