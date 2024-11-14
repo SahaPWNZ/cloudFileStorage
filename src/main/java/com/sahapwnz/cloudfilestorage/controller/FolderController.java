@@ -2,6 +2,7 @@ package com.sahapwnz.cloudfilestorage.controller;
 
 import com.sahapwnz.cloudfilestorage.service.FileService;
 import com.sahapwnz.cloudfilestorage.service.UserDetailsImpl;
+import com.sahapwnz.cloudfilestorage.util.ControllerUtil;
 import com.sahapwnz.cloudfilestorage.util.ValidationUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class FolderController {
                         @RequestParam("prefix") String prefix,
                         @AuthenticationPrincipal UserDetailsImpl userDetails,
                         HttpServletRequest request) {
-        String rootPath = "user-" + userDetails.getUser().getId() + "-files";
+        String rootPath = ControllerUtil.getRootPath(userDetails);
         ValidationUtil.isValidNewFolderName(folderName, rootPath + prefix, fileService);
 
         fileService.createFolder(folderName, rootPath + prefix);
@@ -46,12 +47,11 @@ public class FolderController {
                       @RequestParam("prefix") String prefix,
                       @AuthenticationPrincipal UserDetailsImpl userDetails,
                       HttpServletRequest request) {
-        String rootPath = "user-" + userDetails.getUser().getId() + "-files";
+        String rootPath = ControllerUtil.getRootPath(userDetails);
         Arrays.stream(files).forEach(file -> System.out.println("folder:: " + file.getOriginalFilename()));
         ValidationUtil.isValidLoadFolderName(rootPath + prefix, files, fileService);
+
         fileService.putFolder(files, rootPath + prefix);
-
-
         return "redirect:" + request.getHeader("Referer");
     }
 
@@ -60,11 +60,9 @@ public class FolderController {
                         @RequestParam("prefix") String prefix,
                         @AuthenticationPrincipal UserDetailsImpl userDetails,
                         HttpServletRequest request) {
-        System.out.println("delete-folder:" + pathToFolder);
-        System.out.println("delete-folder:" + prefix);
-        String rootPath = "user-" + userDetails.getUser().getId() + "-files";
-        fileService.deleteFolder(rootPath + prefix + "/" + pathToFolder);
+        String rootPath = ControllerUtil.getRootPath(userDetails);
 
+        fileService.deleteFolder(rootPath + prefix + "/" + pathToFolder);
         return "redirect:" + request.getHeader("Referer");
     }
 
@@ -74,7 +72,7 @@ public class FolderController {
                         @RequestParam("prefix") String prefix,
                         @AuthenticationPrincipal UserDetailsImpl userDetails,
                         HttpServletRequest request) {
-        String rootPath = "user-" + userDetails.getUser().getId() + "-files";
+        String rootPath = ControllerUtil.getRootPath(userDetails);
         ValidationUtil.isValidRenameFolderName(newFolderName, rootPath + prefix, fileService);
 
         fileService.renameFolder(oldFolderName, newFolderName, rootPath + prefix + "/");
@@ -85,7 +83,7 @@ public class FolderController {
     ResponseEntity<byte[]> downloadFolder(@RequestParam("prefix") String prefix,
                                           @RequestParam("path") String folderName,
                                           @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        String rootPath = "user-" + userDetails.getUser().getId() + "-files";
+        String rootPath = ControllerUtil.getRootPath(userDetails);
 
         ByteArrayOutputStream zipOutputStream = new ByteArrayOutputStream();
         ZipOutputStream zipOut = new ZipOutputStream(zipOutputStream);

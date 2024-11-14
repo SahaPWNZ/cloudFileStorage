@@ -2,6 +2,7 @@ package com.sahapwnz.cloudfilestorage.controller;
 
 import com.sahapwnz.cloudfilestorage.service.FileService;
 import com.sahapwnz.cloudfilestorage.service.UserDetailsImpl;
+import com.sahapwnz.cloudfilestorage.util.ControllerUtil;
 import com.sahapwnz.cloudfilestorage.util.ValidationUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +35,7 @@ public class FileController {
                     @RequestParam("prefix") String prefix,
                     @AuthenticationPrincipal UserDetailsImpl userDetails,
                     HttpServletRequest request) {
-        System.out.println("prefix: " + prefix);
-        String rootPath = "user-" + userDetails.getUser().getId() + "-files";
+        String rootPath = ControllerUtil.getRootPath(userDetails);
 
         ValidationUtil.isValidLoadFileName(rootPath + prefix, file.getOriginalFilename(), fileService);
         fileService.putObject(rootPath + prefix, file);
@@ -48,8 +48,8 @@ public class FileController {
                       @RequestParam("prefix") String prefix,
                       @AuthenticationPrincipal UserDetailsImpl userDetails,
                       HttpServletRequest request) {
-        System.out.println("prefix: " + prefix);
-        String rootPath = "user-" + userDetails.getUser().getId() + "-files";
+
+        String rootPath = ControllerUtil.getRootPath(userDetails);
         fileService.deleteObject(rootPath + prefix + "/" + pathToFile);
 
         return "redirect:" + request.getHeader("Referer");
@@ -61,7 +61,7 @@ public class FileController {
                       @RequestParam("prefix") String prefix,
                       @AuthenticationPrincipal UserDetailsImpl userDetails,
                       HttpServletRequest request) {
-        String rootPath = "user-" + userDetails.getUser().getId() + "-files";
+        String rootPath = ControllerUtil.getRootPath(userDetails);
         ValidationUtil.isValidRenameFileName(newFileName, rootPath + prefix, fileService);
 
         fileService.renameFile(oldFileName, newFileName, rootPath + prefix);
@@ -72,7 +72,7 @@ public class FileController {
     ResponseEntity<Resource> downloadFile(@RequestParam("prefix") String prefix,
                                           @RequestParam("path") String fileName,
                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        String rootPath = "user-" + userDetails.getUser().getId() + "-files";
+        String rootPath = ControllerUtil.getRootPath(userDetails);
         InputStream inputStream = fileService.downloadFile(rootPath + prefix + "/" + fileName);
         Resource resource = new InputStreamResource(inputStream);
 
@@ -86,7 +86,7 @@ public class FileController {
     String search(Model model,
                   @RequestParam("query") String query,
                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        String rootPath = "user-" + userDetails.getUser().getId() + "-files";
+        String rootPath = ControllerUtil.getRootPath(userDetails);
         var results = fileService.search(query, rootPath);
 
         model.addAttribute("query", query);
