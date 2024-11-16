@@ -61,7 +61,6 @@ public class FolderController {
                         @AuthenticationPrincipal UserDetailsImpl userDetails,
                         HttpServletRequest request) {
         String rootPath = ControllerUtil.getRootPath(userDetails);
-
         fileService.deleteFolder(rootPath + prefix + "/" + pathToFolder);
         return "redirect:" + request.getHeader("Referer");
     }

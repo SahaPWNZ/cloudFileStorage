@@ -1,8 +1,8 @@
-package com.sahapwnz.cloudfilestorage;
+package com.sahapwnz.cloudfilestorage.service;
 
 import com.sahapwnz.cloudfilestorage.entity.User;
+import com.sahapwnz.cloudfilestorage.exception.RegistrationException;
 import com.sahapwnz.cloudfilestorage.repository.UserRepository;
-import com.sahapwnz.cloudfilestorage.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 @Slf4j
@@ -26,25 +28,16 @@ class UserServiceTest {
     PasswordEncoder bCryptPasswordEncoder;
 
     @Test
-    void testSaveUserSuccess() {
-        User user = User.builder()
-                .login("testUser")
-                .password("test")
-                .build();
-        when(userRepository.findByLogin(user.getLogin())).thenReturn(Optional.empty());
-        when(userRepository.save(user)).thenReturn(user);
-//        Assertions.assertTrue(userService.saveUser(user));
-        log.info("testSaveUserSuccess() pass");
-    }
-
-    @Test
     void testSaveUserIfUserExist() {
         User user = User.builder()
                 .login("testUser")
                 .password("test")
                 .build();
         when(userRepository.findByLogin(user.getLogin())).thenReturn(Optional.of(user));
-//        Assertions.assertFalse(userService.saveUser(user));
+        RegistrationException thrown = assertThrows(RegistrationException.class, () -> {
+            userService.saveUser(user);
+        });
+        assertEquals("This login: testUser is already in use, use another one", thrown.getMessage());
         log.info("testSaveUserIfUserExist() pass");
     }
 
