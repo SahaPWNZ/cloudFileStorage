@@ -36,13 +36,8 @@ public class AuthController {
         String rootPath = ControllerUtil.getRootPath(userDetails);
         model.addAttribute("login", userDetails.getUsername());
         model.addAttribute("breadcrumbs", breadcrumbsService.getBreadcrumbsForPath(path));
-        if (path != null) {
-            model.addAttribute("prefix", "/" + path);
-            model.addAttribute("allPath", fileService.getAllPathInThisFolder(rootPath + "/" + path));
-        } else {
-            model.addAttribute("prefix", "");
-            model.addAttribute("allPath", fileService.getAllPathInThisFolder(rootPath));
-        }
+        model.addAttribute("prefix", path != null ? "/" + path : "");
+        model.addAttribute("allPath", fileService.getAllPathInThisFolder(rootPath + (path != null ? "/" + path : "")));
         return "home";
     }
 
