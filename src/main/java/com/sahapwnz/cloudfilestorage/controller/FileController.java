@@ -91,7 +91,6 @@ public class FileController {
 
         model.addAttribute("query", query);
         model.addAttribute("results", results);
-        results.forEach(System.out::println);
         return "search";
     }
 }

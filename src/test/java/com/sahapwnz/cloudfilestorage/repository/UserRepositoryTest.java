@@ -84,11 +84,6 @@ class UserRepositoryTest {
         assertThrows(DataIntegrityViolationException.class, () -> userRepository.save(user1));
         log.info("userLoginConstraintExceptionTest() pass");
     }
-
-//    @TestConfiguration
-//    static class TestConfig {
-//        // Здесь можно определить дополнительные бины, если необходимо
-//    }
 }
 
 

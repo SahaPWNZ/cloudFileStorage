@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -24,13 +25,14 @@ public class UserService implements UserDetailsService {
         this.bCryptPasswordEncoder = passwordEncoder;
     }
 
+    @Transactional
     public void saveUser(User user) {
         if (userRepository.findByLogin(user.getLogin()).isPresent()) {
             throw new RegistrationException("This login: " + user.getLogin() + " is already in use, use another one");
         }
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
-        log.info("user: " + user.getLogin() + "was save");
+        log.info("User '{}' was successfully saved", user.getLogin());
     }
 
     @Override
@@ -43,9 +45,9 @@ public class UserService implements UserDetailsService {
     }
 
     public User convertToUser(UserRequestDTO userRequestDTO) {
-        User user = new User();
-        user.setLogin(userRequestDTO.getLogin());
-        user.setPassword(userRequestDTO.getPassword());
-        return user;
+        return User.builder()
+                .login(userRequestDTO.getLogin())
+                .password(userRequestDTO.getPassword())
+                .build();
     }
 }
