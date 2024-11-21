@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -20,9 +21,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
-
     @ExceptionHandler(Exception.class)
     public ModelAndView handleAllExceptions(Exception ex) {
+        log.info(ex.getMessage());
         ModelAndView mav = new ModelAndView("error");
         mav.addObject("errorMessage", ex.getMessage());
         return mav;
@@ -45,13 +46,23 @@ public class GlobalExceptionHandler {
         return "/register";
     }
 
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public String handleLoadExceptions(MaxUploadSizeExceededException ex,
+                                       RedirectAttributes redirectAttributes,
+                                       HttpServletRequest request) {
+
+        redirectAttributes.addFlashAttribute("error", ex.getMessage());
+        log.info(ex.getMessage()+"TOO_Large");
+        return "redirect:" + request.getHeader("Referer");
+    }
+
     @ExceptionHandler({InvalidNameException.class, ExistException.class})
     public String handleHomePageExceptions(RuntimeException ex,
                                            RedirectAttributes redirectAttributes,
                                            HttpServletRequest request) {
 
         redirectAttributes.addFlashAttribute("error", ex.getMessage());
-        log.info(ex.getMessage());
+        log.info(ex.getMessage()+"3exceptX");
         return "redirect:" + request.getHeader("Referer");
     }
 

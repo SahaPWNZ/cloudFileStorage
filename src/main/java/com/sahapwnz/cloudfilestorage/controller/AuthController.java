@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class AuthController {
-    //глянуть отличия принципла и юзерДетаилс
     private final UserService userService;
     private final FileService fileService;
     private final BreadcrumbsService breadcrumbsService;

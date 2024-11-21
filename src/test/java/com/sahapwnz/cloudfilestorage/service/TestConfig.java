@@ -18,6 +18,6 @@ public class TestConfig {
 
     @Bean
     public FileService fileService(MinioClient minioClient) {
-        return new FileService(minioClient);
+        return new FileService(minioClient, "test-bucket");
     }
 }
