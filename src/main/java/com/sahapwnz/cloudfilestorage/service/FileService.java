@@ -164,7 +164,7 @@ public class FileService {
 
     public void renameFolder(String oldFolderName, String newFolderName, String prefix) {
 
-        if (!isObjectExist(oldFolderName)) {
+        if (!isObjectExist(prefix + oldFolderName)) {
             throw new ApplicationException("This object is already not in your storage!");
         }
 
