@@ -14,7 +14,6 @@ public class MinioConfig {
                                    @Value("${minio.host}") String minioHost) {
         return MinioClient.builder()
                 .endpoint(minioHost)
-//                .endpoint("http://localhost:9000")
                 .credentials(minioname, password)
                 .build();
     }

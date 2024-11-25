@@ -7,6 +7,7 @@ import com.sahapwnz.cloudfilestorage.service.FileService;
 import com.sahapwnz.cloudfilestorage.service.UserDetailsImpl;
 import com.sahapwnz.cloudfilestorage.service.UserService;
 import com.sahapwnz.cloudfilestorage.util.ControllerUtil;
+import com.sahapwnz.cloudfilestorage.util.ValidationUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,7 +35,12 @@ public class AuthController {
     public String home(Model model,
                        @AuthenticationPrincipal UserDetailsImpl userDetails,
                        @RequestParam(required = false) String path) {
+
         String rootPath = ControllerUtil.getRootPath(userDetails);
+        if (path != null) {
+            ValidationUtil.isValidPathParametr(path, rootPath, fileService);
+        }
+
         model.addAttribute("login", userDetails.getUsername());
         model.addAttribute("breadcrumbs", breadcrumbsService.getBreadcrumbsForPath(path));
         model.addAttribute("prefix", path != null ? "/" + path : "");

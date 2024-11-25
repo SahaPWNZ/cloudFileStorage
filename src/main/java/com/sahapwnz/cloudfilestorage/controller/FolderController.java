@@ -90,7 +90,7 @@ public class FolderController {
         fileService.downloadFolder(rootPath + prefix + "/" + folderName, zipOut);
         zipOut.close();
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"files.zip\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + folderName.substring(0, folderName.length() - 1) + ".zip\"")
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(zipOutputStream.toByteArray());
     }

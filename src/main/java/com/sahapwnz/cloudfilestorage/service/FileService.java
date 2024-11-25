@@ -88,6 +88,9 @@ public class FileService {
     }
 
     public void deleteObject(String fullPath) {
+        if (!isObjectExist(fullPath)) {
+            throw new ApplicationException("This object is already not in your storage");
+        }
         try {
             minioClient.removeObject(RemoveObjectArgs.builder()
                     .bucket(BUCKET_NAME)
@@ -129,9 +132,14 @@ public class FileService {
     }
 
     public void renameFile(String oldFileName, String newFileName, String prefix) {
+        String oldFilePath = prefix + "/" + oldFileName;
+        String newFilePath = prefix + "/" + newFileName;
+
+        if (!isObjectExist(oldFilePath)) {
+            throw new ApplicationException("This object is already not in your storage!");
+        }
+
         try {
-            String oldFilePath = prefix + "/" + oldFileName;
-            String newFilePath = prefix + "/" + newFileName;
 
             CopySource source = CopySource.builder()
                     .bucket(BUCKET_NAME)
@@ -155,6 +163,11 @@ public class FileService {
     }
 
     public void renameFolder(String oldFolderName, String newFolderName, String prefix) {
+
+        if (!isObjectExist(oldFolderName)) {
+            throw new ApplicationException("This object is already not in your storage!");
+        }
+
         try {
             ListObjectsArgs lArgs = ListObjectsArgs.builder()
                     .bucket(BUCKET_NAME)
@@ -196,6 +209,10 @@ public class FileService {
     }
 
     public void deleteFolder(String fullPathToFolder) {
+
+        if (!isObjectExist(fullPathToFolder)) {
+            throw new ApplicationException("This object is already not in your storage!");
+        }
         try {
             ListObjectsArgs lArgs = ListObjectsArgs.builder()
                     .bucket(BUCKET_NAME)
@@ -250,6 +267,10 @@ public class FileService {
 
 
     public InputStream downloadFile(String objectPath) {
+        if (!isObjectExist(objectPath)) {
+            throw new ApplicationException("This object is already not in your storage!");
+        }
+
         try {
             return minioClient.getObject(
                     GetObjectArgs.builder()
@@ -264,6 +285,9 @@ public class FileService {
     }
 
     public void downloadFolder(String folderPath, ZipOutputStream zipOut) {
+        if (!isObjectExist(folderPath)) {
+            throw new ApplicationException("This object is already not in your storage!");
+        }
         try {
             Iterable<Result<Item>> results = minioClient.listObjects(
                     ListObjectsArgs.builder()

@@ -1,9 +1,13 @@
 package com.sahapwnz.cloudfilestorage.util;
 
+import com.sahapwnz.cloudfilestorage.exception.ApplicationException;
 import com.sahapwnz.cloudfilestorage.exception.ExistException;
 import com.sahapwnz.cloudfilestorage.exception.InvalidNameException;
 import com.sahapwnz.cloudfilestorage.service.FileService;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class ValidationUtil {
 
@@ -36,6 +40,20 @@ public class ValidationUtil {
         checkFolderExist(prefix, nameMainFolder, fileService);
     }
 
+    public static void isValidPathParametr(String path, String rootPath, FileService fileService) {
+        if (path.trim().isEmpty() || path.startsWith("/") || path.endsWith("/")) {
+            throw new ApplicationException("YOU PATH IS INVALID, ЖУЛИК: " + path);
+        } else {
+            List<String> segments = Arrays.asList(path.split("/"));
+            String prefix = rootPath;
+            for (String segment : segments) {
+                validateName(segment);
+                isFolderCheck(prefix, segment, fileService);
+                prefix = prefix + "/" + segment;
+            }
+        }
+    }
+
     private static String getFolderName(MultipartFile[] files) {
         if (files == null || files.length == 0) {
             throw new InvalidNameException("Exception on load folder. Please repeat");
@@ -45,7 +63,7 @@ public class ValidationUtil {
         if (slashIndex != -1) {
             return fileName.substring(0, slashIndex);
         }
-        throw new InvalidNameException("Exception on load folder. Please repeat");
+        throw new ApplicationException("Exception on load folder. Please repeat");
     }
 
     private static void validateName(String name, String str) {
@@ -71,6 +89,14 @@ public class ValidationUtil {
         String fullPath = prefix + "/" + name;
         if (fileService.isObjectExist(fullPath)) {
             throw new ExistException("File with name: " + name + " is already in use in this Folder.");
+        }
+    }
+
+    private static void isFolderCheck(String prefix, String nameFolderWithoutSlash, FileService fileService) {
+        String fullPath = prefix + "/" + nameFolderWithoutSlash + "/";
+        if (!fileService.isObjectExist(fullPath)) {
+            System.out.println(fullPath);
+            throw new ApplicationException("YOU DONT HAVE FOLDER WITH NAME: " + nameFolderWithoutSlash);
         }
     }
 
