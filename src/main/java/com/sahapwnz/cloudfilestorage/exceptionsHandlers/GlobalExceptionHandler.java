@@ -62,7 +62,7 @@ public class GlobalExceptionHandler {
                                            HttpServletRequest request) {
 
         redirectAttributes.addFlashAttribute("error", ex.getMessage());
-        log.info(ex.getMessage()+"3exceptX");
+        log.info(ex.getMessage());
         return "redirect:" + request.getHeader("Referer");
     }
 
