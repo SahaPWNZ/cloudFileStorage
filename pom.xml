@@ -10,8 +10,8 @@
     </parent>
     <groupId>com.sahapwnz</groupId>
     <artifactId>cloudFileStorage</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>cloudFileStorage</name>
+    <version>0.0.1</version>
+    <name>my_app</name>
     <description>cloudFileStorage</description>
     <url/>
     <licenses>
@@ -117,6 +117,8 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
     </dependencies>
+
+
 
     <build>
         <plugins>

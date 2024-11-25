@@ -111,7 +111,7 @@
         <div class="load-form-container">
             <form action="#" th:action="@{/loadFile}" method="post" enctype="multipart/form-data">
                 <div class="drop-zone">
-                    <span class="drop-zone__prompt">Drop file here or click to upload</span>
+                    <span class="drop-zone__prompt">Click to upload file</span>
                     <input type="file" name="myFile" class="drop-zone__input">
                     <input type="hidden" name="prefix" th:value="${prefix}"/>
                 </div>
@@ -121,7 +121,7 @@
         <div class="load-form-container">
             <form action="#" th:action="@{/loadFolder}" method="post" enctype="multipart/form-data">
                 <div class="drop-zone">
-                    <span class="drop-zone__prompt">Drop folder here or click to upload</span>
+                    <span class="drop-zone__prompt">Click to upload folder</span>
                     <input type="file" name="myFolder" webkitdirectory multiple class="drop-zone__input">
                     <input type="hidden" name="prefix" th:value="${prefix}"/>
                 </div>

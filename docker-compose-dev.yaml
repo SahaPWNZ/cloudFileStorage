@@ -7,9 +7,6 @@ services:
       - minio_data:/data
     ports:
       - "9000:9000"
-    #      - '9001:9001'
-    #    networks:
-    #      - minionetwork
     environment:
       MINIO_ACCESS_KEY: minioadmin
       MINIO_SECRET_KEY: minioadmin
@@ -22,7 +19,6 @@ services:
       - redis_data:/data
   postgres:
     image: postgres:13.3
-    restart: always
     container_name: postgres_db2
     environment:
       POSTGRES_DB: storage_db
@@ -36,7 +32,5 @@ volumes:
   pgdata:
   minio_data:
   redis_data:
-  #networks:
-  #  minionetwork:
 
 

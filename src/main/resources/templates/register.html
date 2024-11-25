@@ -33,7 +33,7 @@
 
         input[type="text"],
         input[type="password"] {
-            width: 100%; /* Ширина полей ввода на всю ширину контейнера */
+            width: 90%; /* Ширина полей ввода на всю ширину контейнера */
             padding: 10px; /* Внутренние отступы полей ввода */
             border: 1px solid #ccc; /* Рамка для полей ввода */
             border-radius: 4px; /* Закругленные углы полей ввода */
@@ -102,8 +102,8 @@
 <h1>Registration</h1>
 
 <form action="#" th:action="@{/register}" method="post" th:object="${userRequestDTO}">
-    <label for="login">Email(login):</label>
-    <input type="text" id="login" name="login" th:field="*{login}" required/>
+    <label for="login">Email:</label>
+    <input type="text" id="login" name="email" th:field="*{login}" required/>
     <br><br>
     <label for="password">Password:</label>
     <input type="password" id="password" name="password" th:field="*{password}" required/>

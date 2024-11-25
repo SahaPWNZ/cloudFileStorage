@@ -31,7 +31,9 @@ public class AuthController {
     }
 
     @GetMapping("/")
-    public String home(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestParam(required = false) String path) {
+    public String home(Model model,
+                       @AuthenticationPrincipal UserDetailsImpl userDetails,
+                       @RequestParam(required = false) String path) {
         String rootPath = ControllerUtil.getRootPath(userDetails);
         model.addAttribute("login", userDetails.getUsername());
         model.addAttribute("breadcrumbs", breadcrumbsService.getBreadcrumbsForPath(path));

@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
     @ExceptionHandler(Exception.class)
     public ModelAndView handleAllExceptions(Exception ex) {
         log.info(ex.getMessage());
@@ -34,7 +35,7 @@ public class GlobalExceptionHandler {
         model.addAttribute("userRequestDTO", new UserRequestDTO());
         model.addAttribute("error", extractDefaultMessages(ex));
         log.info(ex.getMessage());
-        return "/register";
+        return "register";
     }
 
     @ExceptionHandler(RegistrationException.class)
@@ -43,18 +44,17 @@ public class GlobalExceptionHandler {
         model.addAttribute("userRequestDTO", new UserRequestDTO());
         model.addAttribute("error", ex.getMessage());
         log.info(ex.getMessage());
-        return "/register";
+        return "register";
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public String handleLoadExceptions(MaxUploadSizeExceededException ex,
                                        RedirectAttributes redirectAttributes,
-                                       HttpServletRequest request) {
-
-        redirectAttributes.addFlashAttribute("error", ex.getMessage());
+                                       HttpServletRequest request
+    ) {
         log.info(ex.getMessage()+"TOO_Large");
-        return "redirect:" + request.getHeader("Referer");
-    }
+        redirectAttributes.addFlashAttribute("error", ex.getMessage());
+        return "redirect:" + request.getHeader("Referer");}
 
     @ExceptionHandler({InvalidNameException.class, ExistException.class})
     public String handleHomePageExceptions(RuntimeException ex,

@@ -158,13 +158,19 @@ public class FileService {
         try {
             ListObjectsArgs lArgs = ListObjectsArgs.builder()
                     .bucket(BUCKET_NAME)
-                    .prefix(prefix + oldFolderName)
+                    .prefix(prefix + oldFolderName) // Указываем, что ищем именно папку
                     .recursive(true)
                     .build();
             Iterable<Result<Item>> filesInFolder = minioClient.listObjects(lArgs);
+
             for (Result<Item> pathToFile : filesInFolder) {
                 String oldPathToFile = pathToFile.get().objectName();
-                String newPathToFile = oldPathToFile.replace(oldFolderName, newFolderName);
+
+                // Формируем новый путь, заменяя только первый сегмент
+                String newPathToFile = oldPathToFile.replaceFirst(
+                        "^" + prefix + oldFolderName,
+                        prefix + newFolderName
+                );
 
                 copyObject(oldPathToFile, newPathToFile);
                 deleteObject(oldPathToFile);
