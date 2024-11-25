@@ -52,9 +52,10 @@ public class GlobalExceptionHandler {
                                        RedirectAttributes redirectAttributes,
                                        HttpServletRequest request
     ) {
-        log.info(ex.getMessage()+"TOO_Large");
+        log.info(ex.getMessage() + "TOO_Large");
         redirectAttributes.addFlashAttribute("error", ex.getMessage());
-        return "redirect:" + request.getHeader("Referer");}
+        return "redirect:" + request.getHeader("Referer");
+    }
 
     @ExceptionHandler({InvalidNameException.class, ExistException.class})
     public String handleHomePageExceptions(RuntimeException ex,

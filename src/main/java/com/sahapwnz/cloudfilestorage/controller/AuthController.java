@@ -9,7 +9,6 @@ import com.sahapwnz.cloudfilestorage.service.UserService;
 import com.sahapwnz.cloudfilestorage.util.ControllerUtil;
 import com.sahapwnz.cloudfilestorage.util.ValidationUtil;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,7 +23,6 @@ public class AuthController {
     private final FileService fileService;
     private final BreadcrumbsService breadcrumbsService;
 
-    @Autowired
     public AuthController(UserService userService, FileService fileService, BreadcrumbsService breadcrumbsService) {
         this.userService = userService;
         this.fileService = fileService;

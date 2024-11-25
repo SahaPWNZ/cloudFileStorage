@@ -5,7 +5,6 @@ import com.sahapwnz.cloudfilestorage.service.UserDetailsImpl;
 import com.sahapwnz.cloudfilestorage.util.ControllerUtil;
 import com.sahapwnz.cloudfilestorage.util.ValidationUtil;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +24,6 @@ import java.util.zip.ZipOutputStream;
 public class FolderController {
     FileService fileService;
 
-    @Autowired
     public FolderController(FileService fileService) {
         this.fileService = fileService;
     }

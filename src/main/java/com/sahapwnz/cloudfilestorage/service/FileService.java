@@ -7,7 +7,6 @@ import io.minio.errors.ErrorResponseException;
 import io.minio.messages.Item;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,7 +22,6 @@ public class FileService {
     private final String BUCKET_NAME;
     MinioClient minioClient;
 
-    @Autowired
     public FileService(MinioClient minioClient, @Value("${application.bucket.name: default-bucket-name}") String bucketName) {
         this.BUCKET_NAME = bucketName;
         this.minioClient = minioClient;
@@ -235,9 +233,7 @@ public class FileService {
         Set<String> uniquePaths = getUniquePaths(files);
         uniquePaths.forEach(path -> createFolder(path, prefix));
 
-        Arrays.stream(files).forEach(file -> {
-            putObject(prefix, file);
-        });
+        Arrays.stream(files).forEach(file -> putObject(prefix, file));
     }
 
     private Set<String> getUniquePaths(MultipartFile[] files) {

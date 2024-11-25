@@ -5,7 +5,6 @@ import com.sahapwnz.cloudfilestorage.service.UserDetailsImpl;
 import com.sahapwnz.cloudfilestorage.util.ControllerUtil;
 import com.sahapwnz.cloudfilestorage.util.ValidationUtil;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -25,7 +24,6 @@ import java.io.InputStream;
 public class FileController {
     FileService fileService;
 
-    @Autowired
     public FileController(FileService fileService) {
         this.fileService = fileService;
     }

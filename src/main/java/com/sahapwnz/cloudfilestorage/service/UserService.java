@@ -5,7 +5,6 @@ import com.sahapwnz.cloudfilestorage.entity.User;
 import com.sahapwnz.cloudfilestorage.exception.RegistrationException;
 import com.sahapwnz.cloudfilestorage.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,7 +18,6 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder bCryptPasswordEncoder;
 
-    @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = passwordEncoder;
